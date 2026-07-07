@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model CompanyProfile {
+  id        String    @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  address   String?
+  city      String?
+  country   String?
+  taxId     String?
+  logoUrl   String?
+  clients   Client[]
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Client {
+  id        String         @id @default(cuid())
+  companyId String
+  company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  phone     String?
+  address   String?
+  city      String?
+  country   String?
+  notes     String?
+  invoices  Invoice[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([companyId])
+}
+
+model Invoice {
+  id          String         @id @default(cuid())
+  invoiceNo   String
+  companyId   String
+  company     CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  clientId    String
+  client      Client         @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  issueDate   DateTime
+  dueDate     DateTime
+  status      InvoiceStatus  @default(DRAFT)
+  taxRate     Int            @default(0)
+  discount    Int            @default(0)
+  notes       String?
+  lineItems   InvoiceItem[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@unique([companyId, invoiceNo])
+  @@index([companyId])
+  @@index([clientId])
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Int      @default(1)
+  unitPrice   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([invoiceId])
+}
