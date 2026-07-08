@@ -48,12 +48,20 @@ export default function Home() {
             ))}
           </div>
 
-          <Link
-            href="/dashboard"
-            className="rounded-lg bg-[#17201b] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1f6f56]"
-          >
-            Start free
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/sign-in"
+              className="hidden text-sm font-semibold text-[#516258] hover:text-[#17201b] sm:inline-flex"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/sign-up"
+              className="rounded-lg bg-[#17201b] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1f6f56]"
+            >
+              Start free
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -73,7 +81,7 @@ export default function Home() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
-              href="/dashboard"
+              href="/sign-up"
               className="rounded-lg bg-[#1f6f56] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#185744]"
             >
               Create first invoice

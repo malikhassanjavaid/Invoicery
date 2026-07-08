@@ -2,13 +2,13 @@ import { getPrisma, hasDatabaseUrl } from "./prisma";
 
 export type StoredCompany = {
   id: string;
+  clerkUserId: string | null;
   name: string;
   email: string;
-  phone: string | null;
   address: string | null;
-  city: string | null;
   country: string | null;
-  taxId: string | null;
+  currency: string | null;
+  phone: string | null;
   logoUrl: string | null;
 };
 
@@ -16,11 +16,6 @@ export type StoredClient = {
   id: string;
   name: string;
   email: string;
-  phone: string | null;
-  address: string | null;
-  city: string | null;
-  country: string | null;
-  notes: string | null;
   _count: {
     invoices: number;
   };
@@ -48,25 +43,26 @@ export type StoredInvoice = {
   }[];
 };
 
-export async function getCompanyProfile(): Promise<StoredCompany | null> {
+export async function getCompanyProfile(userId: string): Promise<StoredCompany | null> {
   if (!hasDatabaseUrl) {
     return null;
   }
 
   const prisma = await getPrisma();
   const company = await prisma.companyProfile.findFirst({
+    where: { clerkUserId: userId },
     orderBy: { createdAt: "asc" },
   });
 
   return company as StoredCompany | null;
 }
 
-export async function getClients(): Promise<StoredClient[]> {
+export async function getClients(userId: string): Promise<StoredClient[]> {
   if (!hasDatabaseUrl) {
     return [];
   }
 
-  const company = await getCompanyProfile();
+  const company = await getCompanyProfile(userId);
 
   if (!company) {
     return [];
@@ -86,12 +82,12 @@ export async function getClients(): Promise<StoredClient[]> {
   return clients as StoredClient[];
 }
 
-export async function getInvoices(): Promise<StoredInvoice[]> {
+export async function getInvoices(userId: string): Promise<StoredInvoice[]> {
   if (!hasDatabaseUrl) {
     return [];
   }
 
-  const company = await getCompanyProfile();
+  const company = await getCompanyProfile(userId);
 
   if (!company) {
     return [];
@@ -127,11 +123,11 @@ export function getInvoiceTotal(invoice: {
   return discounted + Math.round((discounted * invoice.taxRate) / 100);
 }
 
-export async function getDashboardData() {
+export async function getDashboardData(userId: string) {
   const [company, clients, invoices] = await Promise.all([
-    getCompanyProfile(),
-    getClients(),
-    getInvoices(),
+    getCompanyProfile(userId),
+    getClients(userId),
+    getInvoices(userId),
   ]);
 
   const paidRevenue = invoices

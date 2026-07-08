@@ -1,11 +1,16 @@
 import { DashboardShell } from "../_components/dashboard-shell";
+import { LogoField } from "./_components/logo-field";
 import { saveCompanyProfile } from "../actions";
 import { getCompanyProfile } from "@/lib/data";
+import { requireSyncedUser } from "@/lib/auth-sync";
 
 export const dynamic = "force-dynamic";
 
+const CURRENCIES = ["USD", "EUR", "GBP", "PKR", "INR", "AED", "CAD", "AUD", "JPY", "CNY"];
+
 export default async function CompanyProfilePage() {
-  const company = await getCompanyProfile();
+  const userId = await requireSyncedUser();
+  const company = await getCompanyProfile(userId);
 
   return (
     <DashboardShell
@@ -24,7 +29,7 @@ export default async function CompanyProfilePage() {
 
         <div className="grid gap-5 md:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold">
-            Company name
+            Business name *
             <input
               name="name"
               required
@@ -33,7 +38,7 @@ export default async function CompanyProfilePage() {
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold">
-            Company email
+            Business email *
             <input
               name="email"
               type="email"
@@ -42,55 +47,52 @@ export default async function CompanyProfilePage() {
               className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
             />
           </label>
+          <label className="grid gap-2 text-sm font-semibold md:col-span-2">
+            Business address *
+            <input
+              name="address"
+              required
+              defaultValue={company?.address ?? ""}
+              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
+            />
+          </label>
           <label className="grid gap-2 text-sm font-semibold">
-            Phone
+            Country *
+            <input
+              name="country"
+              required
+              defaultValue={company?.country ?? ""}
+              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-semibold">
+            Currency *
+            <select
+              name="currency"
+              required
+              defaultValue={company?.currency ?? ""}
+              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
+            >
+              <option value="" disabled>
+                Select currency
+              </option>
+              {CURRENCIES.map((code) => (
+                <option key={code} value={code}>
+                  {code}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-2 text-sm font-semibold">
+            Phone number
             <input
               name="phone"
               defaultValue={company?.phone ?? ""}
               className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
             />
           </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Tax ID
-            <input
-              name="taxId"
-              defaultValue={company?.taxId ?? ""}
-              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold md:col-span-2">
-            Address
-            <input
-              name="address"
-              defaultValue={company?.address ?? ""}
-              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            City
-            <input
-              name="city"
-              defaultValue={company?.city ?? ""}
-              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Country
-            <input
-              name="country"
-              defaultValue={company?.country ?? ""}
-              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
-            />
-          </label>
-          <label className="grid gap-2 text-sm font-semibold md:col-span-2">
-            Logo URL
-            <input
-              name="logoUrl"
-              type="url"
-              defaultValue={company?.logoUrl ?? ""}
-              className="rounded-lg border border-[#cfd8ca] px-4 py-3 font-normal outline-none focus:border-[#1f6f56]"
-            />
-          </label>
+
+          <LogoField defaultValue={company?.logoUrl} />
         </div>
 
         <div>

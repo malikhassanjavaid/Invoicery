@@ -1,13 +1,22 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { DashboardShell } from "./_components/dashboard-shell";
 import { getDashboardData, getInvoiceTotal } from "@/lib/data";
 import { formatCents, formatDate } from "@/lib/format";
+import { requireSyncedUser } from "@/lib/auth-sync";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const { company, clients, invoices, metrics } = await getDashboardData();
+  const userId = await requireSyncedUser();
+  const { company, clients, invoices, metrics } = await getDashboardData(userId);
   const recentInvoices = invoices.slice(0, 5);
+
+  if (!company) {
+    redirect("/dashboard/profile");
+  }
+
+  const currency = company.currency ?? "USD";
 
   return (
     <DashboardShell
@@ -32,26 +41,10 @@ export default async function DashboardPage() {
         </>
       }
     >
-      {!company ? (
-        <div className="rounded-lg border border-[#dbe3d5] bg-white p-6">
-          <h2 className="text-xl font-semibold">Set up your company profile first</h2>
-          <p className="mt-3 max-w-2xl leading-7 text-[#607066]">
-            Invoices need your company details before they can be created. Add your
-            company profile now; when Neon is connected it will be stored in Postgres.
-          </p>
-          <Link
-            href="/dashboard/profile"
-            className="mt-5 inline-flex rounded-lg bg-[#1f6f56] px-5 py-3 text-sm font-semibold text-white"
-          >
-            Add company profile
-          </Link>
-        </div>
-      ) : null}
-
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Total revenue", formatCents(metrics.paidRevenue), "Paid invoice value"],
-          ["Outstanding", formatCents(metrics.outstanding), "Sent and overdue"],
+          ["Total revenue", formatCents(metrics.paidRevenue, currency), "Paid invoice value"],
+          ["Outstanding", formatCents(metrics.outstanding, currency), "Sent and overdue"],
           ["Paid invoices", String(metrics.paidInvoices), "Completed invoices"],
           ["Active clients", String(metrics.activeClients), "Stored client records"],
         ].map(([label, value, detail]) => (
@@ -93,7 +86,7 @@ export default async function DashboardPage() {
                       <td className="px-5 py-4 font-semibold">{invoice.invoiceNo}</td>
                       <td className="px-5 py-4 text-[#52625a]">{invoice.client.name}</td>
                       <td className="px-5 py-4 font-semibold">
-                        {formatCents(getInvoiceTotal(invoice))}
+                        {formatCents(getInvoiceTotal(invoice), currency)}
                       </td>
                       <td className="px-5 py-4 text-[#52625a]">{formatDate(invoice.dueDate)}</td>
                       <td className="px-5 py-4">

@@ -1,8 +1,17 @@
-export function formatCents(cents: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(cents / 100);
+export function formatCents(cents: number, currency = "USD") {
+  const code = currency || "USD";
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: code,
+    }).format(cents / 100);
+  } catch {
+    // Fall back to USD if an unsupported currency code is stored.
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(cents / 100);
+  }
 }
 
 export function toCents(value: FormDataEntryValue | null) {

@@ -1,12 +1,11 @@
+import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 const sidebarItems = [
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Company Profile", href: "/dashboard/profile" },
-  { label: "Invoices", href: "/dashboard/invoices" },
   { label: "Clients", href: "/dashboard/clients" },
-  { label: "Reports", href: "/dashboard/reports" },
-  { label: "Settings", href: "/dashboard/settings" },
+  { label: "Invoices", href: "/dashboard/invoices" },
+  { label: "Company Profile", href: "/dashboard/profile" },
 ];
 
 type DashboardShellProps = {
@@ -26,6 +25,10 @@ export function DashboardShell({
   actions,
   companyName,
 }: DashboardShellProps) {
+  const visibleSidebarItems = companyName
+    ? sidebarItems
+    : sidebarItems.filter((item) => item.label === "Company Profile");
+
   return (
     <main className="min-h-screen bg-[#f4f7ef] text-[#17201b]">
       <div className="flex min-h-screen flex-col lg:flex-row">
@@ -43,7 +46,7 @@ export function DashboardShell({
           </div>
 
           <nav className="mt-6 flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
-            {sidebarItems.map((item) => (
+            {visibleSidebarItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -79,7 +82,10 @@ export function DashboardShell({
                 <p className="text-sm font-semibold text-[#607066]">{subtitle}</p>
                 <h1 className="mt-1 text-3xl font-semibold">{title}</h1>
               </div>
-              {actions ? <div className="flex flex-col gap-3 sm:flex-row">{actions}</div> : null}
+              <div className="flex items-center gap-3">
+                {actions ? <div className="flex flex-col gap-3 sm:flex-row">{actions}</div> : null}
+                <UserButton />
+              </div>
             </div>
           </header>
 

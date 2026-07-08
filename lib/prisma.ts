@@ -2,11 +2,15 @@ type ModelClient = {
   findFirst(args?: unknown): Promise<unknown>;
   findMany(args?: unknown): Promise<unknown>;
   create(args: unknown): Promise<unknown>;
+  upsert(args: unknown): Promise<unknown>;
   update(args: unknown): Promise<unknown>;
+  updateMany(args: unknown): Promise<unknown>;
   delete(args: unknown): Promise<unknown>;
+  deleteMany(args: unknown): Promise<unknown>;
 };
 
 type DbClient = {
+  user: ModelClient;
   companyProfile: ModelClient;
   client: ModelClient;
   invoice: ModelClient;

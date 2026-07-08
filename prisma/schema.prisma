@@ -14,20 +14,32 @@ enum InvoiceStatus {
   CANCELLED
 }
 
+model User {
+  id             String          @id
+  email          String
+  firstName      String?
+  lastName       String?
+  imageUrl       String?
+  companyProfile CompanyProfile?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
 model CompanyProfile {
-  id        String    @id @default(cuid())
-  name      String
-  email     String
-  phone     String?
-  address   String?
-  city      String?
-  country   String?
-  taxId     String?
-  logoUrl   String?
-  clients   Client[]
-  invoices  Invoice[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  clerkUserId String?   @unique
+  user        User?     @relation(fields: [clerkUserId], references: [id], onDelete: Cascade)
+  name        String
+  email       String
+  address     String?
+  country     String?
+  currency    String?
+  phone       String?
+  logoUrl     String?
+  clients     Client[]
+  invoices    Invoice[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Client {
@@ -36,11 +48,6 @@ model Client {
   company   CompanyProfile @relation(fields: [companyId], references: [id], onDelete: Cascade)
   name      String
   email     String
-  phone     String?
-  address   String?
-  city      String?
-  country   String?
-  notes     String?
   invoices  Invoice[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt

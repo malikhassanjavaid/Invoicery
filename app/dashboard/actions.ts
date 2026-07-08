@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getPrisma, hasDatabaseUrl } from "@/lib/prisma";
 import { toCents } from "@/lib/format";
+import { requireSyncedUser } from "@/lib/auth-sync";
 
 function requireDatabase() {
   if (!hasDatabaseUrl) {
@@ -19,9 +20,14 @@ type CompanyRecord = {
   id: string;
 };
 
-async function requireCompany() {
+async function requireUser() {
+  return requireSyncedUser();
+}
+
+async function requireCompany(userId: string) {
   const prisma = await getPrisma();
   const company = (await prisma.companyProfile.findFirst({
+    where: { clerkUserId: userId },
     orderBy: { createdAt: "asc" },
   })) as CompanyRecord | null;
 
@@ -33,25 +39,26 @@ async function requireCompany() {
 }
 
 export async function saveCompanyProfile(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
 
   const data = {
     name: readString(formData, "name"),
     email: readString(formData, "email"),
-    phone: readString(formData, "phone") || null,
     address: readString(formData, "address") || null,
-    city: readString(formData, "city") || null,
     country: readString(formData, "country") || null,
-    taxId: readString(formData, "taxId") || null,
+    currency: readString(formData, "currency") || null,
+    phone: readString(formData, "phone") || null,
     logoUrl: readString(formData, "logoUrl") || null,
   };
 
-  if (!data.name || !data.email) {
-    throw new Error("Company name and email are required.");
+  if (!data.name || !data.email || !data.address || !data.country || !data.currency) {
+    throw new Error("Company name, email, address, country, and currency are required.");
   }
 
   const existingCompany = (await prisma.companyProfile.findFirst({
+    where: { clerkUserId: userId },
     orderBy: { createdAt: "asc" },
   })) as CompanyRecord | null;
 
@@ -61,7 +68,12 @@ export async function saveCompanyProfile(formData: FormData) {
       data,
     });
   } else {
-    await prisma.companyProfile.create({ data });
+    await prisma.companyProfile.create({
+      data: {
+        ...data,
+        clerkUserId: userId,
+      },
+    });
   }
 
   revalidatePath("/dashboard");
@@ -70,20 +82,23 @@ export async function saveCompanyProfile(formData: FormData) {
 }
 
 export async function createClient(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
-  const company = await requireCompany();
+  const company = await requireCompany(userId);
+
+  const name = readString(formData, "name");
+  const email = readString(formData, "email");
+
+  if (!name || !email) {
+    throw new Error("Client name and email are required.");
+  }
 
   await prisma.client.create({
     data: {
       companyId: company.id,
-      name: readString(formData, "name"),
-      email: readString(formData, "email"),
-      phone: readString(formData, "phone") || null,
-      address: readString(formData, "address") || null,
-      city: readString(formData, "city") || null,
-      country: readString(formData, "country") || null,
-      notes: readString(formData, "notes") || null,
+      name,
+      email,
     },
   });
 
@@ -92,21 +107,24 @@ export async function createClient(formData: FormData) {
 }
 
 export async function updateClient(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
+  const company = await requireCompany(userId);
 
   const id = readString(formData, "id");
+  const name = readString(formData, "name");
+  const email = readString(formData, "email");
 
-  await prisma.client.update({
-    where: { id },
+  if (!name || !email) {
+    throw new Error("Client name and email are required.");
+  }
+
+  await prisma.client.updateMany({
+    where: { id, companyId: company.id },
     data: {
-      name: readString(formData, "name"),
-      email: readString(formData, "email"),
-      phone: readString(formData, "phone") || null,
-      address: readString(formData, "address") || null,
-      city: readString(formData, "city") || null,
-      country: readString(formData, "country") || null,
-      notes: readString(formData, "notes") || null,
+      name,
+      email,
     },
   });
 
@@ -115,11 +133,13 @@ export async function updateClient(formData: FormData) {
 }
 
 export async function deleteClient(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
+  const company = await requireCompany(userId);
 
-  await prisma.client.delete({
-    where: { id: readString(formData, "id") },
+  await prisma.client.deleteMany({
+    where: { id: readString(formData, "id"), companyId: company.id },
   });
 
   revalidatePath("/dashboard");
@@ -127,9 +147,10 @@ export async function deleteClient(formData: FormData) {
 }
 
 export async function createInvoice(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
-  const company = await requireCompany();
+  const company = await requireCompany(userId);
   const description = readString(formData, "description");
 
   await prisma.invoice.create({
@@ -158,11 +179,13 @@ export async function createInvoice(formData: FormData) {
 }
 
 export async function updateInvoiceStatus(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
+  const company = await requireCompany(userId);
 
-  await prisma.invoice.update({
-    where: { id: readString(formData, "id") },
+  await prisma.invoice.updateMany({
+    where: { id: readString(formData, "id"), companyId: company.id },
     data: {
       status: readString(formData, "status") || "DRAFT",
     },
@@ -173,11 +196,13 @@ export async function updateInvoiceStatus(formData: FormData) {
 }
 
 export async function deleteInvoice(formData: FormData) {
+  const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
+  const company = await requireCompany(userId);
 
-  await prisma.invoice.delete({
-    where: { id: readString(formData, "id") },
+  await prisma.invoice.deleteMany({
+    where: { id: readString(formData, "id"), companyId: company.id },
   });
 
   revalidatePath("/dashboard");
