@@ -38,7 +38,7 @@ export default async function InvoicesPage() {
       title="Invoices"
       subtitle="Create and manage billing"
       companyName={company?.name}
-      actions={<CreateInvoiceButton clients={clientOptions} />}
+      actions={<CreateInvoiceButton clients={clientOptions} currency={currency} />}
     >
       <div className="rounded-lg border border-[#dbe3d5] bg-white">
         <div className="border-b border-[#e3e9dd] px-5 py-4">

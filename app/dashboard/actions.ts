@@ -146,18 +146,68 @@ export async function deleteClient(formData: FormData) {
   revalidatePath("/dashboard/clients");
 }
 
+type LineItemInput = {
+  description?: string;
+  quantity?: string | number;
+  unitPrice?: string | number;
+};
+
+function parseLineItems(formData: FormData) {
+  let raw: LineItemInput[] = [];
+  try {
+    raw = JSON.parse(readString(formData, "items") || "[]") as LineItemInput[];
+  } catch {
+    raw = [];
+  }
+
+  return raw
+    .map((item) => ({
+      description: String(item.description ?? "").trim(),
+      quantity: Math.max(1, Math.round(Number(item.quantity ?? 1)) || 1),
+      unitPrice: toCents(String(item.unitPrice ?? "0")),
+    }))
+    .filter((item) => item.description && item.unitPrice >= 0);
+}
+
+// Generate the next sequential invoice number for a company (e.g. INV-0007),
+// so users never type one manually.
+async function nextInvoiceNo(
+  prisma: Awaited<ReturnType<typeof getPrisma>>,
+  companyId: string,
+) {
+  const existing = (await prisma.invoice.findMany({
+    where: { companyId },
+  })) as { invoiceNo: string }[];
+
+  let max = 0;
+  for (const invoice of existing) {
+    const match = /(\d+)\s*$/.exec(invoice.invoiceNo ?? "");
+    if (match) {
+      max = Math.max(max, Number(match[1]));
+    }
+  }
+
+  return `INV-${String(max + 1).padStart(4, "0")}`;
+}
+
 export async function createInvoice(formData: FormData) {
   const userId = await requireUser();
   requireDatabase();
   const prisma = await getPrisma();
   const company = await requireCompany(userId);
-  const description = readString(formData, "description");
+
+  const lineItems = parseLineItems(formData);
+  if (!lineItems.length) {
+    throw new Error("Add at least one item with a description and price.");
+  }
+
+  const invoiceNo = await nextInvoiceNo(prisma, company.id);
 
   await prisma.invoice.create({
     data: {
       companyId: company.id,
       clientId: readString(formData, "clientId"),
-      invoiceNo: readString(formData, "invoiceNo"),
+      invoiceNo,
       issueDate: new Date(readString(formData, "issueDate")),
       dueDate: new Date(readString(formData, "dueDate")),
       status: readString(formData, "status") || "DRAFT",
@@ -165,11 +215,7 @@ export async function createInvoice(formData: FormData) {
       discount: toCents(formData.get("discount")),
       notes: readString(formData, "notes") || null,
       lineItems: {
-        create: {
-          description,
-          quantity: Number(formData.get("quantity") ?? 1),
-          unitPrice: toCents(formData.get("unitPrice")),
-        },
+        create: lineItems,
       },
     },
   });
