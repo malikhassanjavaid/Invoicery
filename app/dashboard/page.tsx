@@ -7,9 +7,17 @@ import { requireSyncedUser } from "@/lib/auth-sync";
 
 export const dynamic = "force-dynamic";
 
+const statusStyles: Record<string, string> = {
+  PAID: "bg-[#d7ebdd] text-[#1f6f56]",
+  SENT: "bg-[#cdd3fb] text-[#3a3f8f]",
+  OVERDUE: "bg-[#f9d9df] text-[#a13d3d]",
+  DRAFT: "bg-[#f1f2f4] text-[#6b7280]",
+  CANCELLED: "bg-[#f1f2f4] text-[#6b7280]",
+};
+
 export default async function DashboardPage() {
   const userId = await requireSyncedUser();
-  const { company, clients, invoices, metrics } = await getDashboardData(userId);
+  const { company, invoices, metrics } = await getDashboardData(userId);
   const recentInvoices = invoices.slice(0, 5);
 
   if (!company) {
@@ -28,13 +36,13 @@ export default async function DashboardPage() {
         <>
           <Link
             href="/dashboard/clients"
-            className="rounded-lg border border-[#cfd8ca] bg-white px-4 py-3 text-sm font-semibold"
+            className="rounded-xl border border-[#e5e7eb] bg-white px-4 py-2.5 text-sm font-semibold text-[#1a1a2e] hover:bg-[#f7f7f8]"
           >
             Add client
           </Link>
           <Link
             href="/dashboard/invoices"
-            className="rounded-lg bg-[#1f6f56] px-4 py-3 text-sm font-semibold text-white"
+            className="rounded-xl bg-[#1a1a2e] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2a2a42]"
           >
             Create invoice
           </Link>
@@ -43,88 +51,114 @@ export default async function DashboardPage() {
     >
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
-          ["Total revenue", formatCents(metrics.paidRevenue, currency), "Paid invoice value"],
-          ["Outstanding", formatCents(metrics.outstanding, currency), "Sent and overdue"],
-          ["Paid invoices", String(metrics.paidInvoices), "Completed invoices"],
-          ["Active clients", String(metrics.activeClients), "Stored client records"],
-        ].map(([label, value, detail]) => (
-          <article key={label} className="rounded-lg border border-[#dbe3d5] bg-white p-5">
-            <p className="text-sm font-semibold text-[#607066]">{label}</p>
-            <p className="mt-3 text-3xl font-semibold">{value}</p>
-            <p className="mt-2 text-sm text-[#1f6f56]">{detail}</p>
+          {
+            label: "Total revenue",
+            value: formatCents(metrics.paidRevenue, currency),
+            detail: "Paid invoice value",
+            bg: "bg-[#cdd3fb]",
+            icon: (
+              <path d="M19 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z M16 12h.01 M3 10h18" />
+            ),
+          },
+          {
+            label: "Outstanding",
+            value: formatCents(metrics.outstanding, currency),
+            detail: "Sent and overdue",
+            bg: "bg-[#f9d9df]",
+            icon: <path d="M12 8v4l3 2 M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z" />,
+          },
+          {
+            label: "Paid invoices",
+            value: String(metrics.paidInvoices),
+            detail: "Completed invoices",
+            bg: "bg-[#d7ebdd]",
+            icon: <path d="m9 12 2 2 4-4 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />,
+          },
+          {
+            label: "Active clients",
+            value: String(metrics.activeClients),
+            detail: "Stored client records",
+            bg: "bg-[#e8eaee]",
+            icon: (
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75" />
+            ),
+          },
+        ].map((card) => (
+          <article key={card.label} className={`rounded-3xl p-5 text-[#1a1a2e] ${card.bg}`}>
+            <span className="grid size-11 place-items-center rounded-full border border-black/10 bg-white/50">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="size-5"
+              >
+                {card.icon}
+              </svg>
+            </span>
+            <p className="mt-4 text-sm font-semibold">{card.label}</p>
+            <p className="mt-1 text-xs font-medium text-black/45">{card.detail}</p>
+            <p className="mt-3 text-3xl font-bold">{card.value}</p>
           </article>
         ))}
       </section>
 
-      <section className="mt-6 grid gap-6 xl:grid-cols-[1.5fr_0.8fr]">
-        <div className="rounded-lg border border-[#dbe3d5] bg-white">
-          <div className="flex items-center justify-between border-b border-[#e3e9dd] px-5 py-4">
-            <div>
-              <h2 className="text-lg font-semibold">Recent invoices</h2>
-              <p className="mt-1 text-sm text-[#607066]">Stored invoice activity</p>
-            </div>
-            <Link href="/dashboard/invoices" className="text-sm font-semibold text-[#1f6f56]">
-              View all
-            </Link>
+      <section className="mt-6 rounded-2xl border border-[#eef0f2] bg-white">
+        <div className="flex items-center justify-between border-b border-[#f1f2f4] px-6 py-4">
+          <div>
+            <h2 className="text-lg font-semibold text-[#1a1a2e]">Recent invoices</h2>
+            <p className="mt-1 text-sm text-[#9aa0a6]">Latest invoice activity</p>
           </div>
-
-          {recentInvoices.length ? (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[680px] text-left text-sm">
-                <thead className="bg-[#f7f8f4] text-[#607066]">
-                  <tr>
-                    <th className="px-5 py-3 font-semibold">Invoice</th>
-                    <th className="px-5 py-3 font-semibold">Client</th>
-                    <th className="px-5 py-3 font-semibold">Amount</th>
-                    <th className="px-5 py-3 font-semibold">Due date</th>
-                    <th className="px-5 py-3 font-semibold">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#edf1e9]">
-                  {recentInvoices.map((invoice) => (
-                    <tr key={invoice.id}>
-                      <td className="px-5 py-4 font-semibold">{invoice.invoiceNo}</td>
-                      <td className="px-5 py-4 text-[#52625a]">{invoice.client.name}</td>
-                      <td className="px-5 py-4 font-semibold">
-                        {formatCents(getInvoiceTotal(invoice), currency)}
-                      </td>
-                      <td className="px-5 py-4 text-[#52625a]">{formatDate(invoice.dueDate)}</td>
-                      <td className="px-5 py-4">
-                        <span className="rounded-lg bg-[#eef5ec] px-3 py-2 text-xs font-semibold text-[#1f6f56]">
-                          {invoice.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="px-5 py-8 text-sm text-[#607066]">
-              No invoices yet. Create your first invoice from the Invoices tab.
-            </p>
-          )}
+          <Link
+            href="/dashboard/invoices"
+            className="text-sm font-semibold text-[#1a1a2e] hover:underline"
+          >
+            View all
+          </Link>
         </div>
 
-        <aside className="space-y-6">
-          <div className="rounded-lg border border-[#dbe3d5] bg-white p-5">
-            <h2 className="text-lg font-semibold">Workspace health</h2>
-            <div className="mt-5 space-y-4 text-sm text-[#52625a]">
-              <p>Company profile: {company ? "Complete" : "Needed"}</p>
-              <p>Clients stored: {clients.length}</p>
-              <p>Invoices stored: {invoices.length}</p>
-            </div>
+        {recentInvoices.length ? (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[680px] text-left text-sm">
+              <thead className="text-[#9aa0a6]">
+                <tr className="border-b border-[#f1f2f4]">
+                  <th className="px-6 py-3 font-medium">Invoice</th>
+                  <th className="px-6 py-3 font-medium">Client</th>
+                  <th className="px-6 py-3 font-medium">Amount</th>
+                  <th className="px-6 py-3 font-medium">Due date</th>
+                  <th className="px-6 py-3 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#f4f5f6]">
+                {recentInvoices.map((invoice) => (
+                  <tr key={invoice.id}>
+                    <td className="px-6 py-4 font-semibold text-[#1a1a2e]">{invoice.invoiceNo}</td>
+                    <td className="px-6 py-4 text-[#6b7280]">{invoice.client.name}</td>
+                    <td className="px-6 py-4 font-semibold text-[#1a1a2e]">
+                      {formatCents(getInvoiceTotal(invoice), currency)}
+                    </td>
+                    <td className="px-6 py-4 text-[#6b7280]">{formatDate(invoice.dueDate)}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          statusStyles[invoice.status] ?? statusStyles.DRAFT
+                        }`}
+                      >
+                        {invoice.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-
-          <div className="rounded-lg border border-[#dbe3d5] bg-white p-5">
-            <h2 className="text-lg font-semibold">Database status</h2>
-            <p className="mt-3 text-sm leading-6 text-[#607066]">
-              {process.env.DATABASE_URL
-                ? "Neon connection string is configured."
-                : "Add DATABASE_URL from Neon to enable writes."}
-            </p>
-          </div>
-        </aside>
+        ) : (
+          <p className="px-6 py-8 text-sm text-[#9aa0a6]">
+            No invoices yet. Create your first invoice from the Invoices tab.
+          </p>
+        )}
       </section>
     </DashboardShell>
   );
