@@ -49,6 +49,7 @@ export async function saveCompanyProfile(formData: FormData) {
     address: readString(formData, "address") || null,
     country: readString(formData, "country") || null,
     currency: readString(formData, "currency") || null,
+    brandColor: readString(formData, "brandColor") || null,
     phone: readString(formData, "phone") || null,
     logoUrl: readString(formData, "logoUrl") || null,
   };
@@ -215,6 +216,47 @@ export async function createInvoice(formData: FormData) {
       discount: toCents(formData.get("discount")),
       notes: readString(formData, "notes") || null,
       lineItems: {
+        create: lineItems,
+      },
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/invoices");
+}
+
+export async function updateInvoice(formData: FormData) {
+  const userId = await requireUser();
+  requireDatabase();
+  const prisma = await getPrisma();
+  const company = await requireCompany(userId);
+
+  const id = readString(formData, "id");
+  const lineItems = parseLineItems(formData);
+  if (!lineItems.length) {
+    throw new Error("Add at least one item with a description and price.");
+  }
+
+  // Confirm the invoice belongs to this company before mutating it.
+  const existing = (await prisma.invoice.findFirst({
+    where: { id, companyId: company.id },
+  })) as { id: string } | null;
+  if (!existing) {
+    throw new Error("Invoice not found.");
+  }
+
+  await prisma.invoice.update({
+    where: { id },
+    data: {
+      clientId: readString(formData, "clientId"),
+      issueDate: new Date(readString(formData, "issueDate")),
+      dueDate: new Date(readString(formData, "dueDate")),
+      status: readString(formData, "status") || "DRAFT",
+      taxRate: Number(formData.get("taxRate") ?? 0),
+      discount: toCents(formData.get("discount")),
+      notes: readString(formData, "notes") || null,
+      lineItems: {
+        deleteMany: {},
         create: lineItems,
       },
     },

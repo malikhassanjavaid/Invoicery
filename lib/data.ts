@@ -8,6 +8,7 @@ export type StoredCompany = {
   address: string | null;
   country: string | null;
   currency: string | null;
+  brandColor: string | null;
   phone: string | null;
   logoUrl: string | null;
 };
@@ -104,6 +105,46 @@ export async function getInvoices(userId: string): Promise<StoredInvoice[]> {
   });
 
   return invoices as StoredInvoice[];
+}
+
+export type PublicInvoice = {
+  id: string;
+  invoiceNo: string;
+  status: string;
+  issueDate: Date;
+  dueDate: Date;
+  taxRate: number;
+  discount: number;
+  notes: string | null;
+  client: { name: string; email: string };
+  company: {
+    name: string;
+    email: string;
+    address: string | null;
+    phone: string | null;
+    logoUrl: string | null;
+    brandColor: string | null;
+    currency: string | null;
+  };
+  lineItems: { id: string; description: string; quantity: number; unitPrice: number }[];
+};
+
+export async function getInvoiceById(id: string): Promise<PublicInvoice | null> {
+  if (!hasDatabaseUrl) {
+    return null;
+  }
+
+  const prisma = await getPrisma();
+  const invoice = await prisma.invoice.findFirst({
+    where: { id },
+    include: {
+      client: true,
+      lineItems: true,
+      company: true,
+    },
+  });
+
+  return invoice as PublicInvoice | null;
 }
 
 export function getInvoiceSubtotal(invoice: { lineItems: { quantity: number; unitPrice: number }[] }) {
