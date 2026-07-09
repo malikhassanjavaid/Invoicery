@@ -5,13 +5,14 @@ import { LogoField } from "./logo-field";
 import { BrandColorField } from "./brand-color-field";
 import { saveCompanyProfile } from "../../actions";
 import { formatCents } from "@/lib/format";
+import { COUNTRIES } from "@/lib/countries";
 
 const CURRENCIES = ["USD", "EUR", "GBP", "PKR", "INR", "AED", "CAD", "AUD", "JPY", "CNY"];
 const DEFAULT_ACCENT = "#4f46e5";
 
-const inputClass =
-  "rounded-xl border border-[#e5e7eb] px-4 py-2.5 font-normal text-[#1a1a2e] outline-none transition focus:border-[#1a1a2e]";
-const labelClass = "grid gap-2 text-sm font-semibold text-[#1a1a2e]";
+const fieldLabel = "text-sm font-semibold text-[#1a1a2e]";
+const fieldInput =
+  "mt-2 block w-full min-w-0 rounded-xl border border-[#e5e7eb] px-4 py-2.5 text-sm font-normal text-[#1a1a2e] outline-none transition focus:border-[#7c3aed] focus:ring-2 focus:ring-[#ede9fe]";
 
 type Company = {
   name: string;
@@ -44,114 +45,151 @@ export function ProfileForm({ company }: { company: Company }) {
   const subtotal = SAMPLE_ITEMS.reduce((sum, item) => sum + item.amount, 0);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-      {/* LEFT: form */}
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+      {/* FORM */}
       <form
         action={saveCompanyProfile}
-        className="grid gap-6 rounded-2xl border border-[#eef0f2] bg-white p-6"
+        className="rounded-2xl border border-[#eef0f2] bg-white p-6 sm:p-7"
       >
-        <div>
-          <h2 className="text-lg font-semibold text-[#1a1a2e]">Business information</h2>
-          <p className="mt-1 text-sm text-[#9aa0a6]">
-            These details will appear on invoices and connect clients to your workspace.
-          </p>
-        </div>
+        <h2 className="text-lg font-semibold text-[#1a1a2e]">Business information</h2>
+        <p className="mt-1 text-sm text-[#9aa0a6]">
+          These details will appear on invoices and connect clients to your workspace.
+        </p>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          <label className={labelClass}>
-            Business name *
+        <div className="mt-6 space-y-5">
+          {/* Name + Email */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="min-w-0">
+              <label htmlFor="name" className={fieldLabel}>
+                Business name *
+              </label>
+              <input
+                id="name"
+                name="name"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={fieldInput}
+              />
+            </div>
+            <div className="min-w-0">
+              <label htmlFor="email" className={fieldLabel}>
+                Business email *
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={fieldInput}
+              />
+            </div>
+          </div>
+
+          {/* Address */}
+          <div className="min-w-0">
+            <label htmlFor="address" className={fieldLabel}>
+              Business address *
+            </label>
             <input
-              name="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputClass}
-            />
-          </label>
-          <label className={labelClass}>
-            Business email *
-            <input
-              name="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClass}
-            />
-          </label>
-          <label className={`${labelClass} md:col-span-2`}>
-            Business address *
-            <input
+              id="address"
               name="address"
               required
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className={inputClass}
+              className={fieldInput}
             />
-          </label>
-          <label className={labelClass}>
-            Country *
-            <input
-              name="country"
-              required
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className={inputClass}
-            />
-          </label>
-          <label className={labelClass}>
-            Currency *
-            <select
-              name="currency"
-              required
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              className={inputClass}
-            >
-              <option value="" disabled>
-                Select currency
-              </option>
-              {CURRENCIES.map((code) => (
-                <option key={code} value={code}>
-                  {code}
+          </div>
+
+          {/* Country + Currency */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="min-w-0">
+              <label htmlFor="country" className={fieldLabel}>
+                Country *
+              </label>
+              <select
+                id="country"
+                name="country"
+                required
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className={fieldInput}
+              >
+                <option value="" disabled>
+                  Select country
                 </option>
-              ))}
-            </select>
-          </label>
-          <label className={labelClass}>
-            Phone number
+                {COUNTRIES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="min-w-0">
+              <label htmlFor="currency" className={fieldLabel}>
+                Currency *
+              </label>
+              <select
+                id="currency"
+                name="currency"
+                required
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className={fieldInput}
+              >
+                <option value="" disabled>
+                  Select currency
+                </option>
+                {CURRENCIES.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Phone */}
+          <div className="min-w-0">
+            <label htmlFor="phone" className={fieldLabel}>
+              Phone number
+            </label>
             <input
+              id="phone"
               name="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className={inputClass}
+              className={fieldInput}
             />
-          </label>
+          </div>
 
+          {/* Invoice color (renders its own label) */}
           <BrandColorField value={brandColor} onChange={setBrandColor} />
+
+          {/* Logo (renders its own label) */}
           <LogoField value={logo} onChange={setLogo} />
         </div>
 
-        <div>
-          <button className="rounded-xl bg-[#1a1a2e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2a2a42]">
-            Save company profile
-          </button>
-        </div>
+        <button className="mt-7 rounded-xl bg-[#1a1a2e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2a2a42]">
+          Save company profile
+        </button>
       </form>
 
-      {/* RIGHT: live invoice preview */}
-      <div className="lg:sticky lg:top-4 lg:self-start">
+      {/* PREVIEW */}
+      <div className="w-full max-w-md xl:max-w-none xl:sticky xl:top-4 xl:self-start">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#9aa0a6]">
           Invoice preview
         </p>
         <div className="overflow-hidden rounded-2xl border border-[#eef0f2] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
           <div className="h-2" style={{ backgroundColor: accent }} />
-          <div className="bg-white p-6">
+          <div className="bg-white p-5">
             <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 {logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={logo} alt="" className="size-10 rounded-md object-contain" />
+                  <img src={logo} alt="" className="size-10 shrink-0 rounded-md object-contain" />
                 ) : null}
                 <div className="min-w-0">
                   <p className="truncate text-sm font-bold text-[#1a1a2e]">
@@ -162,17 +200,17 @@ export function ProfileForm({ company }: { company: Company }) {
                   ) : null}
                 </div>
               </div>
-              <p className="text-xl font-extrabold tracking-tight" style={{ color: accent }}>
+              <p className="shrink-0 text-lg font-extrabold tracking-tight" style={{ color: accent }}>
                 INVOICE
               </p>
             </div>
 
             <div className="mt-4 flex justify-between gap-4 text-[11px]">
-              <div>
+              <div className="min-w-0">
                 <p className="font-semibold text-[#9aa0a6]">Bill to</p>
                 <p className="mt-0.5 font-semibold text-[#1a1a2e]">Sample Client</p>
               </div>
-              <div className="text-right text-[#6b7280]">
+              <div className="shrink-0 text-right text-[#6b7280]">
                 <p>No. INV-0001</p>
                 <p>Due in 14 days</p>
               </div>
@@ -192,8 +230,10 @@ export function ProfileForm({ company }: { company: Company }) {
                     key={item.description}
                     className="flex items-center justify-between gap-2 px-3 py-2 text-[11px]"
                   >
-                    <span className="text-[#1a1a2e]">{item.description}</span>
-                    <span className="font-semibold text-[#1a1a2e]">{money(item.amount)}</span>
+                    <span className="truncate text-[#1a1a2e]">{item.description}</span>
+                    <span className="shrink-0 font-semibold text-[#1a1a2e]">
+                      {money(item.amount)}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -214,7 +254,7 @@ export function ProfileForm({ company }: { company: Company }) {
             </div>
 
             {email || phone ? (
-              <p className="mt-4 text-[10px] text-[#9aa0a6]">
+              <p className="mt-4 truncate text-[10px] text-[#9aa0a6]">
                 {[email, phone].filter(Boolean).join(" · ")}
               </p>
             ) : null}
