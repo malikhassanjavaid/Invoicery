@@ -17,11 +17,15 @@ const statusStyles: Record<string, string> = {
 
 export default async function DashboardPage() {
   const userId = await requireSyncedUser();
-  const { company, invoices, metrics } = await getDashboardData(userId);
+  const { company, clients, invoices, metrics } = await getDashboardData(userId);
   const recentInvoices = invoices.slice(0, 5);
 
+  // Guided onboarding for new users: set up the company, then add a first client.
   if (!company) {
     redirect("/dashboard/profile");
+  }
+  if (!clients.length) {
+    redirect("/dashboard/clients?welcome=1");
   }
 
   const currency = company.currency ?? "USD";

@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "../_components/dashboard-shell";
+import { OnboardingSteps } from "../_components/onboarding-steps";
 import {
   AddClientButton,
   DeleteClientButton,
@@ -24,7 +26,11 @@ function getInitials(name: string) {
   return letters.join("") || "?";
 }
 
-export default async function ClientsPage() {
+export default async function ClientsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ welcome?: string }>;
+}) {
   const userId = await requireSyncedUser();
   const [company, clients] = await Promise.all([
     getCompanyProfile(userId),
@@ -33,6 +39,65 @@ export default async function ClientsPage() {
 
   if (!company) {
     redirect("/dashboard/profile");
+  }
+
+  const onboarding = (await searchParams).welcome === "1";
+
+  // Guided onboarding: add the first client, then confirm the workspace is ready.
+  if (onboarding) {
+    const done = clients.length > 0;
+    return (
+      <DashboardShell
+        active="Clients"
+        title={done ? "You're all set" : "Add your first client"}
+        subtitle={done ? "Your workspace is ready" : "One more step"}
+        companyName={company.name}
+      >
+        <div className="space-y-6">
+          <OnboardingSteps current={done ? 3 : 2} />
+
+          {done ? (
+            <div className="grid place-items-center rounded-2xl border border-[#e5e0f7] bg-gradient-to-br from-[#f5f3ff] to-white px-6 py-14 text-center">
+              <span className="grid size-14 place-items-center rounded-full bg-[#7c3aed] text-white">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="size-7">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              </span>
+              <h2 className="mt-5 text-2xl font-bold text-[#1a1a2e]">Your workspace is ready! 🎉</h2>
+              <p className="mt-2 max-w-md text-sm text-[#6b7280]">
+                Company profile set and first client added. You can now create and send
+                professional invoices.
+              </p>
+              <Link
+                href="/dashboard"
+                className="mt-6 inline-flex rounded-xl bg-[#7c3aed] px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(124,58,237,0.35)] transition hover:bg-[#6d28d9]"
+              >
+                Go to dashboard
+              </Link>
+            </div>
+          ) : (
+            <div className="grid place-items-center rounded-2xl border border-[#eef0f2] bg-white px-6 py-14 text-center">
+              <span className="grid size-14 place-items-center rounded-full bg-[#ede9fe] text-[#6d28d9]">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="size-7">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </span>
+              <h2 className="mt-5 text-2xl font-bold text-[#1a1a2e]">Add your first client</h2>
+              <p className="mt-2 max-w-md text-sm text-[#6b7280]">
+                A client is anyone you send invoices to. Just their name and email — you can
+                add more anytime.
+              </p>
+              <div className="mt-6">
+                <AddClientButton />
+              </div>
+            </div>
+          )}
+        </div>
+      </DashboardShell>
+    );
   }
 
   return (
