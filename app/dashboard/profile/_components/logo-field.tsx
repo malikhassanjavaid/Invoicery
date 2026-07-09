@@ -39,10 +39,16 @@ function resizeToDataUrl(file: File): Promise<string> {
   });
 }
 
-export function LogoField({ defaultValue }: { defaultValue?: string | null }) {
-  const [logo, setLogo] = useState<string>(defaultValue ?? "");
+export function LogoField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
   const [error, setError] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const logo = value ?? "";
 
   async function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -59,14 +65,14 @@ export function LogoField({ defaultValue }: { defaultValue?: string | null }) {
     }
 
     try {
-      setLogo(await resizeToDataUrl(file));
+      onChange(await resizeToDataUrl(file));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not load that image.");
     }
   }
 
   function handleRemove() {
-    setLogo("");
+    onChange("");
     setError("");
     if (inputRef.current) {
       inputRef.current.value = "";
@@ -75,18 +81,18 @@ export function LogoField({ defaultValue }: { defaultValue?: string | null }) {
 
   return (
     <div className="grid gap-3 md:col-span-2">
-      <span className="text-sm font-semibold">Logo</span>
+      <span className="text-sm font-semibold text-[#1a1a2e]">Logo</span>
 
       {/* Persists the resized image with the form's Server Action */}
       <input type="hidden" name="logoUrl" value={logo} />
 
       <div className="flex flex-wrap items-center gap-4">
-        <div className="grid size-20 place-items-center overflow-hidden rounded-lg border border-[#cfd8ca] bg-[#f7f8f4]">
+        <div className="grid size-20 place-items-center overflow-hidden rounded-xl border border-[#e5e7eb] bg-[#fafbfc]">
           {logo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logo} alt="Company logo preview" className="size-full object-contain" />
           ) : (
-            <span className="text-xs font-semibold text-[#9aa79d]">No logo</span>
+            <span className="text-xs font-semibold text-[#9aa0a6]">No logo</span>
           )}
         </div>
 
@@ -96,7 +102,7 @@ export function LogoField({ defaultValue }: { defaultValue?: string | null }) {
             type="file"
             accept="image/*"
             onChange={handleChange}
-            className="text-sm font-normal file:mr-3 file:rounded-lg file:border-0 file:bg-[#1f6f56] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-[#195c48]"
+            className="text-sm font-normal text-[#6b7280] file:mr-3 file:rounded-lg file:border-0 file:bg-[#1a1a2e] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-[#2a2a42]"
           />
           {logo ? (
             <button
