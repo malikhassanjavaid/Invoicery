@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SidebarUser } from "./sidebar-user";
 
@@ -70,8 +71,11 @@ export function DashboardShell({
     <main className="min-h-screen bg-white text-[#1a1a2e]">
       <div className="flex min-h-screen flex-col lg:flex-row">
         <aside className="border-b border-[#eef0f2] bg-white px-4 py-6 lg:w-72 lg:border-b-0 lg:border-r">
-          <Link href="/" className="block px-2 text-2xl font-extrabold italic tracking-tight text-[#1a1a2e]">
-            Invoicery
+          <Link href="/" className="flex items-center gap-2 px-2">
+            <Image src="/logo.png" alt="Invoicery logo" width={28} height={28} className="object-contain" />
+            <span className="text-2xl font-extrabold italic tracking-tight text-[#1a1a2e]">
+              Invoicery
+            </span>
           </Link>
 
           <div className="mt-6">
