@@ -1,8 +1,14 @@
 import { SignUp } from "@clerk/nextjs";
+import { getSessionUserId } from "@/lib/auth-sync";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  if (await getSessionUserId()) {
+    redirect("/dashboard");
+  }
+
   return (
     <main className="grid min-h-screen place-items-center bg-gradient-to-b from-[#f5f3ff] to-white px-6 py-12 text-[#1a1a2e]">
       <div className="w-full max-w-md">

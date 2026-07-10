@@ -10,7 +10,7 @@ function decodeBase64Url(value: string) {
   );
 }
 
-async function getClerkSessionClaims() {
+export async function getClerkSessionClaims() {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore
     .getAll()
@@ -37,6 +37,12 @@ async function getClerkSessionClaims() {
   } catch {
     return null;
   }
+}
+
+export async function getSessionUserId() {
+  const claims = await getClerkSessionClaims();
+
+  return claims?.sub ?? null;
 }
 
 type ClerkProfile = {
@@ -73,8 +79,7 @@ async function getClerkProfile(clerkUserId: string): Promise<ClerkProfile> {
 }
 
 export async function requireSyncedUser() {
-  const claims = await getClerkSessionClaims();
-  const clerkUserId = claims?.sub;
+  const clerkUserId = await getSessionUserId();
 
   if (!clerkUserId) {
     redirect("/sign-in");
