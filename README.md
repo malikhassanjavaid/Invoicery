@@ -72,6 +72,17 @@ Clerk handles sign in and sign up. Signed-out visitors can use the landing page 
 - `/dashboard/invoices` - invoice management
 - `/invoice/[id]` - public invoice preview/download page
 
+## Validation
+
+Run linting and production build checks before pushing changes:
+
+```bash
+npm run lint
+npm run build
+```
+
+These checks catch TypeScript, ESLint, and Next.js build issues before deployment.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
