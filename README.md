@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Invoicery
+
+Invoicery is a modern invoicing SaaS app built with Next.js. It gives users a polished landing page, Clerk authentication, a protected dashboard, company profile onboarding, client records, invoice creation, and branded invoice previews.
 
 ## Getting Started
 
