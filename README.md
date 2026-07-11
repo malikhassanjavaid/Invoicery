@@ -11,6 +11,15 @@ Invoicery is a modern invoicing SaaS app built with Next.js. It gives users a po
 - Prisma ORM
 - Neon Postgres
 
+## Core Features
+
+- Auth-aware landing page with polished product sections
+- Protected dashboard routes for signed-in users
+- Company profile onboarding before dashboard access
+- Client creation, editing, and deletion
+- Invoice creation, editing, previewing, sharing, and status tracking
+- Light and dark dashboard themes
+
 ## Getting Started
 
 First, run the development server:
