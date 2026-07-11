@@ -61,6 +61,17 @@ npx prisma migrate dev
 
 Clerk handles sign in and sign up. Signed-out visitors can use the landing page and auth pages, while dashboard routes are protected. On first dashboard access, users are guided to complete the company profile before using the rest of the workspace.
 
+## Main Routes
+
+- `/` - public landing page
+- `/sign-in` - Clerk sign-in page
+- `/sign-up` - Clerk sign-up page
+- `/dashboard` - workspace overview
+- `/dashboard/profile` - company profile setup
+- `/dashboard/clients` - client management
+- `/dashboard/invoices` - invoice management
+- `/invoice/[id]` - public invoice preview/download page
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
