@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { createInvoice, deleteInvoice, updateInvoice } from "../../actions";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { createInvoice, updateInvoice } from "../../actions";
 import { formatCents } from "@/lib/format";
 
 type DialogState = { ok: boolean; error: string };
@@ -28,13 +28,13 @@ const STATUSES = ["DRAFT", "SENT", "PAID", "OVERDUE", "CANCELLED"];
 const DEFAULT_ACCENT = "#4f46e5";
 
 const primaryButton =
-  "rounded-xl bg-[#1a1a2e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2a2a42] disabled:cursor-not-allowed disabled:opacity-50";
+  "rounded-xl bg-[var(--dash-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--dash-primary-text)] transition hover:bg-[var(--dash-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50";
 const secondaryButton =
-  "rounded-xl border border-[#e5e7eb] bg-white px-5 py-2.5 text-sm font-semibold text-[#1a1a2e] transition hover:bg-[#f7f7f8]";
+  "rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] px-5 py-2.5 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-hover)]";
 const inputClass =
-  "rounded-xl border border-[#e5e7eb] px-4 py-2.5 font-normal text-[#1a1a2e] outline-none transition focus:border-[#1a1a2e]";
+  "rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel-soft)] px-4 py-2.5 font-normal text-[var(--dash-text)] outline-none transition placeholder:text-[var(--dash-muted)] focus:border-[var(--dash-primary)]";
 const cellInput =
-  "w-full rounded-lg border border-[#e5e7eb] px-3 py-2 font-normal text-[#1a1a2e] outline-none transition focus:border-[#1a1a2e]";
+  "w-full rounded-lg border border-[var(--dash-border)] bg-[var(--dash-panel-soft)] px-3 py-2 font-normal text-[var(--dash-text)] outline-none transition placeholder:text-[var(--dash-muted)] focus:border-[var(--dash-primary)]";
 
 function toCents(value: string) {
   return Math.round((Number(value) || 0) * 100);
@@ -144,15 +144,15 @@ export function InvoiceDialog({
         role="dialog"
         aria-modal="true"
         aria-label={isEdit ? "Edit invoice" : "Create invoice"}
-        className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-[#eef0f2] bg-white p-6 shadow-[0_20px_60px_rgba(16,24,40,0.16)]"
+        className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-6 text-[var(--dash-text)] shadow-[var(--dash-shadow)]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold text-[#1a1a2e]">
+            <h2 className="text-xl font-bold text-[var(--dash-text)]">
               {isEdit ? "Edit invoice" : "Create invoice"}
             </h2>
-            <p className="mt-1 text-sm text-[#9aa0a6]">
+            <p className="mt-1 text-sm text-[var(--dash-muted)]">
               {isEdit
                 ? "Update the invoice details below."
                 : "The invoice number is generated automatically."}
@@ -162,7 +162,7 @@ export function InvoiceDialog({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="grid size-8 place-items-center rounded-lg text-[#9aa0a6] transition hover:bg-[#f1f2f4] hover:text-[#1a1a2e]"
+            className="grid size-8 place-items-center rounded-lg text-[var(--dash-muted)] transition hover:bg-[var(--dash-hover)] hover:text-[var(--dash-text)]"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="size-5">
               <path d="M18 6 6 18M6 6l12 12" />
@@ -178,7 +178,7 @@ export function InvoiceDialog({
             {/* LEFT: form */}
             <div className="grid gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
                   Client
                   <select
                     name="clientId"
@@ -197,7 +197,7 @@ export function InvoiceDialog({
                     ))}
                   </select>
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
                   Status
                   <select
                     name="status"
@@ -212,7 +212,7 @@ export function InvoiceDialog({
                     ))}
                   </select>
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
                   Issue date
                   <input
                     name="issueDate"
@@ -223,7 +223,7 @@ export function InvoiceDialog({
                     className={inputClass}
                   />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
                   Due date
                   <input
                     name="dueDate"
@@ -237,13 +237,13 @@ export function InvoiceDialog({
               </div>
 
               {/* Line items */}
-              <div className="rounded-xl border border-[#eef0f2]">
-                <div className="flex items-center justify-between border-b border-[#f1f2f4] px-4 py-3">
-                  <span className="text-sm font-semibold text-[#1a1a2e]">Items</span>
+              <div className="rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)]">
+                <div className="flex items-center justify-between border-b border-[var(--dash-border-soft)] px-4 py-3">
+                  <span className="text-sm font-semibold text-[var(--dash-text)]">Items</span>
                   <button
                     type="button"
                     onClick={addItem}
-                    className="rounded-lg border border-[#e5e7eb] px-3 py-1.5 text-sm font-semibold text-[#1a1a2e] hover:bg-[#f7f7f8]"
+                    className="rounded-lg border border-[var(--dash-border)] px-3 py-1.5 text-sm font-semibold text-[var(--dash-text)] hover:bg-[var(--dash-hover)]"
                   >
                     + Add item
                   </button>
@@ -282,7 +282,7 @@ export function InvoiceDialog({
                         onClick={() => removeItem(item.id)}
                         disabled={items.length === 1}
                         aria-label={`Remove item ${index + 1}`}
-                        className="col-span-2 text-center text-lg font-semibold text-[#a13d3d] disabled:opacity-30"
+                        className="col-span-2 text-center text-lg font-semibold text-[var(--dash-danger)] disabled:opacity-30"
                       >
                         ×
                       </button>
@@ -292,7 +292,7 @@ export function InvoiceDialog({
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
                   Tax rate (%)
                   <input
                     name="taxRate"
@@ -303,7 +303,7 @@ export function InvoiceDialog({
                     className={inputClass}
                   />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
                   Discount
                   <input
                     name="discount"
@@ -315,57 +315,57 @@ export function InvoiceDialog({
                     className={inputClass}
                   />
                 </label>
-                <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e] sm:col-span-2">
+                <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)] sm:col-span-2">
                   Notes
                   <textarea name="notes" rows={2} defaultValue={invoice?.notes ?? ""} className={inputClass} />
                 </label>
               </div>
 
               {state.error ? (
-                <p className="text-sm font-semibold text-[#a13d3d]">{state.error}</p>
+                <p className="text-sm font-semibold text-[var(--dash-danger)]">{state.error}</p>
               ) : null}
             </div>
 
             {/* RIGHT: live preview */}
             <div className="lg:sticky lg:top-0 lg:self-start">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#9aa0a6]">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--dash-muted)]">
                 Live preview
               </p>
-              <div className="overflow-hidden rounded-2xl border border-[#eef0f2] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+              <div className="overflow-hidden rounded-2xl border border-[var(--dash-border)] shadow-sm">
                 <div className="h-2" style={{ backgroundColor: accent }} />
-                <div className="bg-white p-5">
+                <div className="bg-[var(--dash-panel-soft)] p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
                       {company.logoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={company.logoUrl} alt="" className="size-9 rounded-md object-contain" />
                       ) : null}
-                      <p className="text-sm font-bold text-[#1a1a2e]">{company.name}</p>
+                      <p className="text-sm font-bold text-[var(--dash-text)]">{company.name}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-extrabold tracking-tight" style={{ color: accent }}>
                         INVOICE
                       </p>
-                      <p className="text-[11px] text-[#9aa0a6]">No. auto-generated</p>
+                      <p className="text-[11px] text-[var(--dash-muted)]">No. auto-generated</p>
                     </div>
                   </div>
 
                   <div className="mt-4 flex justify-between gap-4 text-[11px]">
                     <div>
-                      <p className="font-semibold text-[#9aa0a6]">Bill to</p>
-                      <p className="mt-0.5 font-semibold text-[#1a1a2e]">{clientName || "—"}</p>
+                      <p className="font-semibold text-[var(--dash-muted)]">Bill to</p>
+                      <p className="mt-0.5 font-semibold text-[var(--dash-text)]">{clientName || "—"}</p>
                     </div>
-                    <div className="text-right text-[#6b7280]">
+                    <div className="text-right text-[var(--dash-subtle)]">
                       <p>
-                        Issue: <span className="font-medium text-[#1a1a2e]">{issueDate || "—"}</span>
+                        Issue: <span className="font-medium text-[var(--dash-text)]">{issueDate || "—"}</span>
                       </p>
                       <p>
-                        Due: <span className="font-medium text-[#1a1a2e]">{dueDate || "—"}</span>
+                        Due: <span className="font-medium text-[var(--dash-text)]">{dueDate || "—"}</span>
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-4 overflow-hidden rounded-lg border border-[#f1f2f4]">
+                  <div className="mt-4 overflow-hidden rounded-lg border border-[var(--dash-border-soft)]">
                     <div
                       className="flex justify-between px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-white"
                       style={{ backgroundColor: accent }}
@@ -373,19 +373,19 @@ export function InvoiceDialog({
                       <span>Item</span>
                       <span>Amount</span>
                     </div>
-                    <div className="divide-y divide-[#f4f5f6]">
+                    <div className="divide-y divide-[var(--dash-border-soft)]">
                       {items.map((item) => {
                         const qty = Math.round(Number(item.quantity)) || 0;
                         const line = toCents(item.unitPrice) * qty;
                         return (
                           <div key={item.id} className="flex items-start justify-between gap-2 px-3 py-2 text-[11px]">
                             <div className="min-w-0">
-                              <p className="truncate text-[#1a1a2e]">{item.description || "Item"}</p>
-                              <p className="text-[10px] text-[#9aa0a6]">
+                              <p className="truncate text-[var(--dash-text)]">{item.description || "Item"}</p>
+                              <p className="text-[10px] text-[var(--dash-muted)]">
                                 {qty} × {money(toCents(item.unitPrice))}
                               </p>
                             </div>
-                            <span className="shrink-0 font-semibold text-[#1a1a2e]">{money(line)}</span>
+                            <span className="shrink-0 font-semibold text-[var(--dash-text)]">{money(line)}</span>
                           </div>
                         );
                       })}
@@ -393,20 +393,20 @@ export function InvoiceDialog({
                   </div>
 
                   <div className="mt-3 ml-auto grid w-full max-w-[220px] gap-1 text-[11px]">
-                    <div className="flex justify-between text-[#6b7280]">
+                    <div className="flex justify-between text-[var(--dash-subtle)]">
                       <span>Subtotal</span>
                       <span>{money(subtotal)}</span>
                     </div>
-                    <div className="flex justify-between text-[#6b7280]">
+                    <div className="flex justify-between text-[var(--dash-subtle)]">
                       <span>Discount</span>
                       <span>-{money(discountCents)}</span>
                     </div>
-                    <div className="flex justify-between text-[#6b7280]">
+                    <div className="flex justify-between text-[var(--dash-subtle)]">
                       <span>Tax ({Number(taxRate) || 0}%)</span>
                       <span>{money(taxCents)}</span>
                     </div>
                     <div
-                      className="mt-1 flex justify-between border-t border-[#eef0f2] pt-1 text-sm font-bold"
+                      className="mt-1 flex justify-between border-t border-[var(--dash-border)] pt-1 text-sm font-bold"
                       style={{ color: accent }}
                     >
                       <span>Total</span>
@@ -464,27 +464,5 @@ export function CreateInvoiceButton({
         />
       ) : null}
     </>
-  );
-}
-
-export function DeleteInvoiceButton({ id }: { id: string }) {
-  const [pending, startTransition] = useTransition();
-
-  function handleDelete() {
-    if (!confirm("Delete this invoice? This cannot be undone.")) return;
-    const formData = new FormData();
-    formData.set("id", id);
-    startTransition(() => deleteInvoice(formData));
-  }
-
-  return (
-    <button
-      type="button"
-      disabled={pending}
-      onClick={handleDelete}
-      className="text-sm font-semibold text-[#a13d3d] hover:underline disabled:opacity-50"
-    >
-      {pending ? "Deleting..." : "Delete"}
-    </button>
   );
 }

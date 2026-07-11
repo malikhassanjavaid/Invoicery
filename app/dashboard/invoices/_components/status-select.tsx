@@ -55,7 +55,7 @@ export function StatusSelect({ id, status }: { id: string; status: string }) {
       </button>
 
       {open ? (
-        <div className="absolute left-0 top-full z-30 mt-1.5 w-40 rounded-xl border border-[#eef0f2] bg-white p-1 shadow-[0_8px_24px_rgba(16,24,40,0.12)]">
+        <div className="absolute left-0 top-full z-30 mt-1.5 w-40 rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-1 shadow-[var(--dash-shadow)]">
           {STATUSES.map((option) => {
             const optionStyle = styles[option];
             return (
@@ -63,12 +63,12 @@ export function StatusSelect({ id, status }: { id: string; status: string }) {
                 key={option}
                 type="button"
                 onClick={() => choose(option)}
-                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium hover:bg-[#f7f7f8]"
+                className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium hover:bg-[var(--dash-hover)]"
               >
                 <span className={`size-1.5 rounded-full ${optionStyle.dot}`} />
-                <span className="text-[#1a1a2e]">{option}</span>
+                <span className="text-[var(--dash-text)]">{option}</span>
                 {option === value ? (
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="ml-auto size-3.5 text-[#1a1a2e]">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="ml-auto size-3.5 text-[var(--dash-text)]">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
                 ) : null}

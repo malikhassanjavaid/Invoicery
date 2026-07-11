@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { InvoiceDocument } from "@/app/_components/invoice-document";
 import { InvoicePageActions } from "./_components/invoice-page-actions";
@@ -5,6 +6,31 @@ import { getInvoiceById } from "@/lib/data";
 import { formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const invoice = await getInvoiceById(id);
+
+  if (!invoice) {
+    return {
+      title: "Invoice Not Found",
+      description: "The requested invoice could not be found in Invoicery.",
+    };
+  }
+
+  return {
+    title: `Invoice ${invoice.invoiceNo}`,
+    description: `View invoice ${invoice.invoiceNo} from ${invoice.company.name} for ${invoice.client.name}.`,
+    robots: {
+      index: false,
+      follow: false,
+    },
+  };
+}
 
 export default async function InvoicePage({
   params,

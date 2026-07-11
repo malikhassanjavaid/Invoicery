@@ -28,17 +28,17 @@ export function SidebarUser() {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-[#eef0f2] bg-white px-3 py-2.5 text-left shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition hover:bg-[#f9fafb]"
+        className="flex w-full items-center gap-3 rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] px-3 py-2.5 text-left shadow-sm transition hover:bg-[var(--dash-hover)]"
       >
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={image} alt="" className="size-10 shrink-0 rounded-full object-cover" />
         ) : (
-          <div className="size-10 shrink-0 rounded-full bg-[#e8eaed]" />
+          <div className="size-10 shrink-0 rounded-full bg-[var(--dash-panel-soft)]" />
         )}
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-[#1a1a2e]">{isLoaded ? name : " "}</p>
-          <p className="truncate text-xs text-[#9aa0a6]">{email}</p>
+          <p className="truncate text-sm font-semibold text-[var(--dash-text)]">{isLoaded ? name : " "}</p>
+          <p className="truncate text-xs text-[var(--dash-muted)]">{email}</p>
         </div>
         <svg
           viewBox="0 0 24 24"
@@ -47,28 +47,28 @@ export function SidebarUser() {
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`size-4 shrink-0 text-[#9aa0a6] transition ${open ? "rotate-180" : ""}`}
+          className={`size-4 shrink-0 text-[var(--dash-muted)] transition ${open ? "rotate-180" : ""}`}
         >
           <path d="m6 9 6 6 6-6" />
         </svg>
       </button>
 
       {open ? (
-        <div className="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-[#eef0f2] bg-white p-1 shadow-[0_8px_24px_rgba(16,24,40,0.12)]">
+        <div className="absolute inset-x-0 top-full z-20 mt-2 rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-1 shadow-[var(--dash-shadow)]">
           <button
             type="button"
             onClick={() => {
               setOpen(false);
               clerk.openUserProfile();
             }}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#1a1a2e] hover:bg-[#f7f7f8]"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--dash-text)] hover:bg-[var(--dash-hover)]"
           >
             Manage account
           </button>
           <button
             type="button"
             onClick={() => clerk.signOut({ redirectUrl: "/" })}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#a13d3d] hover:bg-[#fdf2f2]"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--dash-danger)] hover:bg-[var(--dash-danger-soft)]"
           >
             Sign out
           </button>

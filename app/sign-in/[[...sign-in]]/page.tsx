@@ -1,8 +1,14 @@
 import { SignIn } from "@clerk/nextjs";
+import type { Metadata } from "next";
 import { getSessionUserId } from "@/lib/auth-sync";
-import Image from "next/image";
-import Link from "next/link";
+import { BrandLogo } from "@/app/_components/brand-logo";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Sign In",
+  description:
+    "Sign in to Invoicery to manage clients, company details, invoices, and payment status.",
+};
 
 export default async function SignInPage() {
   if (await getSessionUserId()) {
@@ -12,10 +18,9 @@ export default async function SignInPage() {
   return (
     <main className="grid min-h-screen place-items-center bg-gradient-to-b from-[#f5f3ff] to-white px-6 py-12 text-[#1a1a2e]">
       <div className="w-full max-w-md">
-        <Link href="/" className="mb-8 flex items-center justify-center gap-2.5">
-          <Image src="/logo.png" alt="Invoicery logo" width={34} height={34} className="object-contain" />
-          <span className="text-2xl font-extrabold italic tracking-tight">Invoicery</span>
-        </Link>
+        <div className="mb-8 flex justify-center">
+          <BrandLogo iconSize="sm" />
+        </div>
         <SignIn
           routing="path"
           path="/sign-in"

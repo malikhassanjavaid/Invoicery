@@ -10,15 +10,15 @@ type DialogState = { ok: boolean; error: string };
 const INITIAL_STATE: DialogState = { ok: false, error: "" };
 
 const primaryButton =
-  "inline-flex items-center gap-2 rounded-xl bg-[#1a1a2e] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2a2a42] disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex items-center gap-2 rounded-xl bg-[var(--dash-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--dash-primary-text)] transition hover:bg-[var(--dash-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50";
 const secondaryButton =
-  "rounded-xl border border-[#e5e7eb] bg-white px-4 py-2.5 text-sm font-semibold text-[#1a1a2e] transition hover:bg-[#f7f7f8]";
+  "rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] px-4 py-2.5 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-hover)]";
 const inputClass =
-  "rounded-xl border border-[#e5e7eb] px-4 py-2.5 font-normal text-[#1a1a2e] outline-none transition focus:border-[#1a1a2e]";
+  "rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel-soft)] px-4 py-2.5 font-normal text-[var(--dash-text)] outline-none transition placeholder:text-[var(--dash-muted)] focus:border-[var(--dash-primary)]";
 const iconButton =
-  "grid size-9 place-items-center rounded-lg text-[#6b7280] transition hover:bg-[#f1f2f4] hover:text-[#1a1a2e] disabled:opacity-40";
+  "grid size-9 place-items-center rounded-lg text-[var(--dash-subtle)] transition hover:bg-[var(--dash-hover)] hover:text-[var(--dash-text)] disabled:opacity-40";
 const deleteIconButton =
-  "grid size-9 place-items-center rounded-lg text-[#6b7280] transition hover:bg-[#fdf2f2] hover:text-[#a13d3d] disabled:opacity-40";
+  "grid size-9 place-items-center rounded-lg text-[var(--dash-subtle)] transition hover:bg-[var(--dash-danger-soft)] hover:text-[var(--dash-danger)] disabled:opacity-40";
 
 function PencilIcon() {
   return (
@@ -89,17 +89,17 @@ function ClientDialog({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-md rounded-2xl border border-[#eef0f2] bg-white p-6 shadow-[0_20px_60px_rgba(16,24,40,0.16)]"
+        className="w-full max-w-md rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-6 text-[var(--dash-text)] shadow-[var(--dash-shadow)]"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 className="text-xl font-bold text-[#1a1a2e]">{title}</h2>
+        <h2 className="text-xl font-bold text-[var(--dash-text)]">{title}</h2>
         <form action={formAction} className="mt-5 grid gap-4">
           {defaults?.id ? <input type="hidden" name="id" value={defaults.id} /> : null}
-          <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+          <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
             Client name
             <input name="name" required defaultValue={defaults?.name ?? ""} className={inputClass} />
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-[#1a1a2e]">
+          <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
             Email
             <input
               name="email"
@@ -110,7 +110,7 @@ function ClientDialog({
             />
           </label>
           {state.error ? (
-            <p className="text-sm font-semibold text-[#a13d3d]">{state.error}</p>
+            <p className="text-sm font-semibold text-[var(--dash-danger)]">{state.error}</p>
           ) : null}
           <div className="mt-2 flex justify-end gap-3">
             <button type="button" onClick={onClose} className={secondaryButton}>
@@ -174,24 +174,56 @@ export function EditClientButton({
 
 export function DeleteClientButton({ id }: { id: string }) {
   const [pending, startTransition] = useTransition();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   function handleDelete() {
-    if (!confirm("Delete this client? This cannot be undone.")) return;
     const formData = new FormData();
     formData.set("id", id);
-    startTransition(() => deleteClient(formData));
+    startTransition(() => {
+      deleteClient(formData);
+      setConfirmOpen(false);
+    });
   }
 
   return (
-    <button
-      type="button"
-      disabled={pending}
-      onClick={handleDelete}
-      title="Delete client"
-      aria-label="Delete client"
-      className={deleteIconButton}
-    >
-      <TrashIcon />
-    </button>
+    <>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => setConfirmOpen(true)}
+        title="Delete client"
+        aria-label="Delete client"
+        className={deleteIconButton}
+      >
+        <TrashIcon />
+      </button>
+      {confirmOpen ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={() => setConfirmOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Delete client"
+            className="w-full max-w-sm rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-6 text-[var(--dash-text)] shadow-[var(--dash-shadow)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="text-lg font-bold">Delete this client?</h2>
+            <p className="mt-2 text-sm text-[var(--dash-muted)]">This cannot be undone.</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button type="button" onClick={() => setConfirmOpen(false)} className={secondaryButton}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={pending}
+                onClick={handleDelete}
+                className="rounded-xl bg-[var(--dash-danger)] px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50"
+              >
+                {pending ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 }

@@ -8,7 +8,7 @@ const STEPS = [
 
 export function OnboardingSteps({ current }: { current: 1 | 2 | 3 }) {
   return (
-    <div className="rounded-2xl border border-[#e5e0f7] bg-gradient-to-br from-[#f5f3ff] to-white p-5 sm:p-6">
+    <div className="rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-5 sm:p-6">
       <ol className="flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-3">
         {STEPS.map((step, index) => {
           const done = step.n < current;
@@ -19,10 +19,10 @@ export function OnboardingSteps({ current }: { current: 1 | 2 | 3 }) {
                 <span
                   className={`grid size-9 shrink-0 place-items-center rounded-full text-sm font-bold ${
                     done
-                      ? "bg-[#7c3aed] text-white"
+                      ? "bg-[var(--dash-primary)] text-[var(--dash-primary-text)]"
                       : active
-                        ? "border-2 border-[#7c3aed] bg-white text-[#7c3aed]"
-                        : "border-2 border-[#e5e0f7] bg-white text-[#c4b5fd]"
+                        ? "border-2 border-[var(--dash-primary)] bg-[var(--dash-panel)] text-[var(--dash-primary)]"
+                        : "border-2 border-[var(--dash-border)] bg-[var(--dash-panel)] text-[var(--dash-muted)]"
                   }`}
                 >
                   {done ? (
@@ -36,16 +36,16 @@ export function OnboardingSteps({ current }: { current: 1 | 2 | 3 }) {
                 <div className="min-w-0">
                   <p
                     className={`text-sm font-semibold ${
-                      active || done ? "text-[#1a1a2e]" : "text-[#9aa0a6]"
+                      active || done ? "text-[var(--dash-text)]" : "text-[var(--dash-muted)]"
                     }`}
                   >
                     {step.label}
                   </p>
-                  <p className="text-xs text-[#9aa0a6]">{step.desc}</p>
+                  <p className="text-xs text-[var(--dash-muted)]">{step.desc}</p>
                 </div>
               </li>
               {index < STEPS.length - 1 ? (
-                <li aria-hidden className="hidden h-px flex-1 bg-[#e5e0f7] sm:block" />
+                <li aria-hidden className="hidden h-px flex-1 bg-[var(--dash-border)] sm:block" />
               ) : null}
             </Fragment>
           );

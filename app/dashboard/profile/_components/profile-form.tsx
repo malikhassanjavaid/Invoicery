@@ -10,9 +10,9 @@ import { COUNTRIES } from "@/lib/countries";
 const CURRENCIES = ["USD", "EUR", "GBP", "PKR", "INR", "AED", "CAD", "AUD", "JPY", "CNY"];
 const DEFAULT_ACCENT = "#4f46e5";
 
-const fieldLabel = "text-sm font-semibold text-[#1a1a2e]";
+const fieldLabel = "text-sm font-semibold text-[var(--dash-text)]";
 const fieldInput =
-  "mt-2 block w-full min-w-0 rounded-xl border border-[#e5e7eb] px-4 py-2.5 text-sm font-normal text-[#1a1a2e] outline-none transition focus:border-[#7c3aed] focus:ring-2 focus:ring-[#ede9fe]";
+  "mt-2 block w-full min-w-0 rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] px-4 py-2.5 text-sm font-normal text-[var(--dash-text)] outline-none transition focus:border-[var(--dash-primary)] focus:ring-2 focus:ring-[var(--dash-panel-soft)]";
 
 type Company = {
   name: string;
@@ -49,10 +49,10 @@ export function ProfileForm({ company }: { company: Company }) {
       {/* FORM */}
       <form
         action={saveCompanyProfile}
-        className="rounded-2xl border border-[#eef0f2] bg-white p-6 sm:p-7"
+        className="rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-6 sm:p-7"
       >
-        <h2 className="text-lg font-semibold text-[#1a1a2e]">Business information</h2>
-        <p className="mt-1 text-sm text-[#9aa0a6]">
+        <h2 className="text-lg font-semibold text-[var(--dash-text)]">Business information</h2>
+        <p className="mt-1 text-sm text-[var(--dash-muted)]">
           These details will appear on invoices and connect clients to your workspace.
         </p>
 
@@ -172,19 +172,19 @@ export function ProfileForm({ company }: { company: Company }) {
           <LogoField value={logo} onChange={setLogo} />
         </div>
 
-        <button className="mt-7 rounded-xl bg-[#1a1a2e] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2a2a42]">
+        <button className="mt-7 rounded-xl bg-[var(--dash-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--dash-primary-text)] transition hover:bg-[var(--dash-primary-hover)]">
           Save company profile
         </button>
       </form>
 
       {/* PREVIEW */}
       <div className="w-full max-w-md xl:max-w-none xl:sticky xl:top-4 xl:self-start">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#9aa0a6]">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--dash-muted)]">
           Invoice preview
         </p>
-        <div className="overflow-hidden rounded-2xl border border-[#eef0f2] shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <div className="overflow-hidden rounded-2xl border border-[var(--dash-border)] shadow-sm">
           <div className="h-2" style={{ backgroundColor: accent }} />
-          <div className="bg-white p-5">
+          <div className="bg-[var(--dash-panel)] p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-2">
                 {logo ? (
@@ -192,11 +192,11 @@ export function ProfileForm({ company }: { company: Company }) {
                   <img src={logo} alt="" className="size-10 shrink-0 rounded-md object-contain" />
                 ) : null}
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-[#1a1a2e]">
+                  <p className="truncate text-sm font-bold text-[var(--dash-text)]">
                     {name || "Your company"}
                   </p>
                   {address ? (
-                    <p className="truncate text-[11px] text-[#9aa0a6]">{address}</p>
+                    <p className="truncate text-[11px] text-[var(--dash-muted)]">{address}</p>
                   ) : null}
                 </div>
               </div>
@@ -207,16 +207,16 @@ export function ProfileForm({ company }: { company: Company }) {
 
             <div className="mt-4 flex justify-between gap-4 text-[11px]">
               <div className="min-w-0">
-                <p className="font-semibold text-[#9aa0a6]">Bill to</p>
-                <p className="mt-0.5 font-semibold text-[#1a1a2e]">Sample Client</p>
+                <p className="font-semibold text-[var(--dash-muted)]">Bill to</p>
+                <p className="mt-0.5 font-semibold text-[var(--dash-text)]">Sample Client</p>
               </div>
-              <div className="shrink-0 text-right text-[#6b7280]">
+              <div className="shrink-0 text-right text-[var(--dash-subtle)]">
                 <p>No. INV-0001</p>
                 <p>Due in 14 days</p>
               </div>
             </div>
 
-            <div className="mt-4 overflow-hidden rounded-lg border border-[#f1f2f4]">
+            <div className="mt-4 overflow-hidden rounded-lg border border-[var(--dash-border-soft)]">
               <div
                 className="flex justify-between px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-white"
                 style={{ backgroundColor: accent }}
@@ -224,14 +224,14 @@ export function ProfileForm({ company }: { company: Company }) {
                 <span>Item</span>
                 <span>Amount</span>
               </div>
-              <div className="divide-y divide-[#f4f5f6]">
+              <div className="divide-y divide-[var(--dash-border-soft)]">
                 {SAMPLE_ITEMS.map((item) => (
                   <div
                     key={item.description}
                     className="flex items-center justify-between gap-2 px-3 py-2 text-[11px]"
                   >
-                    <span className="truncate text-[#1a1a2e]">{item.description}</span>
-                    <span className="shrink-0 font-semibold text-[#1a1a2e]">
+                    <span className="truncate text-[var(--dash-text)]">{item.description}</span>
+                    <span className="shrink-0 font-semibold text-[var(--dash-text)]">
                       {money(item.amount)}
                     </span>
                   </div>
@@ -240,12 +240,12 @@ export function ProfileForm({ company }: { company: Company }) {
             </div>
 
             <div className="mt-3 ml-auto grid w-full max-w-[200px] gap-1 text-[11px]">
-              <div className="flex justify-between text-[#6b7280]">
+              <div className="flex justify-between text-[var(--dash-subtle)]">
                 <span>Subtotal</span>
                 <span>{money(subtotal)}</span>
               </div>
               <div
-                className="mt-1 flex justify-between border-t border-[#eef0f2] pt-1 text-sm font-bold"
+                className="mt-1 flex justify-between border-t border-[var(--dash-border)] pt-1 text-sm font-bold"
                 style={{ color: accent }}
               >
                 <span>Total</span>
@@ -254,7 +254,7 @@ export function ProfileForm({ company }: { company: Company }) {
             </div>
 
             {email || phone ? (
-              <p className="mt-4 truncate text-[10px] text-[#9aa0a6]">
+              <p className="mt-4 truncate text-[10px] text-[var(--dash-muted)]">
                 {[email, phone].filter(Boolean).join(" · ")}
               </p>
             ) : null}

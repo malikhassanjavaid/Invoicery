@@ -12,9 +12,24 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Invoicery | Simple SaaS Invoicing",
+  applicationName: "Invoicery",
+  title: {
+    default: "Invoicery | Professional Invoice Management",
+    template: "%s | Invoicery",
+  },
   description:
-    "A simple invoicing SaaS landing page with dummy product content.",
+    "Create branded invoices, manage clients, and track billing activity from a clean SaaS dashboard built for growing businesses.",
+  keywords: ["invoicing", "invoice software", "client billing", "SaaS invoicing", "Invoicery"],
+  authors: [{ name: "Invoicery" }],
+  creator: "Invoicery",
+  publisher: "Invoicery",
+  openGraph: {
+    title: "Invoicery | Professional Invoice Management",
+    description:
+      "Create branded invoices, manage clients, and track billing activity from one polished dashboard.",
+    siteName: "Invoicery",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

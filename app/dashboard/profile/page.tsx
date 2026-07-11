@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { OnboardingSteps } from "../_components/onboarding-steps";
 import { ProfileForm } from "./_components/profile-form";
@@ -5,6 +6,12 @@ import { getCompanyProfile } from "@/lib/data";
 import { requireSyncedUser } from "@/lib/auth-sync";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Company Profile",
+  description:
+    "Set up and maintain the company details, brand color, logo, and contact information used on invoices.",
+};
 
 export default async function CompanyProfilePage() {
   const userId = await requireSyncedUser();
@@ -22,8 +29,8 @@ export default async function CompanyProfilePage() {
         <div className="mb-6 space-y-5">
           <OnboardingSteps current={1} />
           <div>
-            <h2 className="text-xl font-bold text-[#1a1a2e]">Step 1 — Set up your company</h2>
-            <p className="mt-1 text-sm text-[#6b7280]">
+            <h2 className="text-xl font-bold text-[var(--dash-text)]">Step 1 - Set up your company</h2>
+            <p className="mt-1 text-sm text-[var(--dash-subtle)]">
               These details appear on your invoices. You can change them anytime.
             </p>
           </div>

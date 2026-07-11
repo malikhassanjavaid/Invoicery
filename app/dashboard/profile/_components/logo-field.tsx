@@ -81,18 +81,18 @@ export function LogoField({
 
   return (
     <div className="grid gap-3 md:col-span-2">
-      <span className="text-sm font-semibold text-[#1a1a2e]">Logo</span>
+      <span className="text-sm font-semibold text-[var(--dash-text)]">Logo</span>
 
       {/* Persists the resized image with the form's Server Action */}
       <input type="hidden" name="logoUrl" value={logo} />
 
       <div className="flex flex-wrap items-center gap-4">
-        <div className="grid size-20 place-items-center overflow-hidden rounded-xl border border-[#e5e7eb] bg-[#fafbfc]">
+        <div className="grid size-20 place-items-center overflow-hidden rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel-soft)]">
           {logo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={logo} alt="Company logo preview" className="size-full object-contain" />
           ) : (
-            <span className="text-xs font-semibold text-[#9aa0a6]">No logo</span>
+            <span className="text-xs font-semibold text-[var(--dash-muted)]">No logo</span>
           )}
         </div>
 
@@ -102,13 +102,13 @@ export function LogoField({
             type="file"
             accept="image/*"
             onChange={handleChange}
-            className="text-sm font-normal text-[#6b7280] file:mr-3 file:rounded-lg file:border-0 file:bg-[#1a1a2e] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-[#2a2a42]"
+            className="text-sm font-normal text-[var(--dash-subtle)] file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--dash-primary)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[var(--dash-primary-text)] hover:file:bg-[var(--dash-primary-hover)]"
           />
           {logo ? (
             <button
               type="button"
               onClick={handleRemove}
-              className="w-fit text-sm font-semibold text-[#a13d3d] hover:underline"
+              className="w-fit text-sm font-semibold text-[var(--dash-danger)] hover:underline"
             >
               Remove logo
             </button>
@@ -116,7 +116,7 @@ export function LogoField({
         </div>
       </div>
 
-      {error ? <p className="text-sm font-semibold text-[#a13d3d]">{error}</p> : null}
+      {error ? <p className="text-sm font-semibold text-[var(--dash-danger)]">{error}</p> : null}
     </div>
   );
 }

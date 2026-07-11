@@ -6,7 +6,7 @@ import { InvoiceDialog, type EditInvoice } from "./invoice-dialog";
 import { InvoiceDocument, type DocCompany, type DocInvoice } from "@/app/_components/invoice-document";
 
 const iconButton =
-  "grid size-9 place-items-center rounded-lg text-[#6b7280] transition hover:bg-[#f1f2f4] hover:text-[#1a1a2e] disabled:opacity-40";
+  "grid size-9 place-items-center rounded-lg text-[var(--dash-subtle)] transition hover:bg-[var(--dash-hover)] hover:text-[var(--dash-text)] disabled:opacity-40";
 
 function EyeIcon() {
   return (
@@ -72,6 +72,7 @@ export function InvoiceRowActions({
   const [preview, setPreview] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [pending, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
@@ -116,10 +117,12 @@ export function InvoiceRowActions({
   }
 
   function handleDelete() {
-    if (!confirm("Delete this invoice? This cannot be undone.")) return;
     const formData = new FormData();
     formData.set("id", invoice.id);
-    startTransition(() => deleteInvoice(formData));
+    startTransition(() => {
+      deleteInvoice(formData);
+      setConfirmOpen(false);
+    });
   }
 
   return (
@@ -146,11 +149,11 @@ export function InvoiceRowActions({
           <ShareIcon />
         </button>
         {menuOpen ? (
-          <div className="absolute right-0 top-full z-30 mt-2 w-52 rounded-xl border border-[#eef0f2] bg-white p-1 shadow-[0_8px_24px_rgba(16,24,40,0.12)]">
+          <div className="absolute right-0 top-full z-30 mt-2 w-52 rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-1 shadow-[var(--dash-shadow)]">
             <button
               type="button"
               onClick={handleCopy}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#1a1a2e] hover:bg-[#f7f7f8]"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--dash-text)] hover:bg-[var(--dash-hover)]"
             >
               {menuIcon("M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2 M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2 M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2 M13 11h6 M16 8l3 3-3 3")}
               {copied ? "Copied!" : "Copy link"}
@@ -158,7 +161,7 @@ export function InvoiceRowActions({
             <button
               type="button"
               onClick={handleDownload}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#1a1a2e] hover:bg-[#f7f7f8]"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--dash-text)] hover:bg-[var(--dash-hover)]"
             >
               {menuIcon("M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3")}
               Download invoice
@@ -166,7 +169,7 @@ export function InvoiceRowActions({
             <button
               type="button"
               onClick={handleEmail}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-[#1a1a2e] hover:bg-[#f7f7f8]"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--dash-text)] hover:bg-[var(--dash-hover)]"
             >
               {menuIcon("M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z M22 6l-10 7L2 6")}
               Send via email
@@ -178,14 +181,47 @@ export function InvoiceRowActions({
       {/* Delete */}
       <button
         type="button"
-        onClick={handleDelete}
+        onClick={() => setConfirmOpen(true)}
         disabled={pending}
         title="Delete invoice"
         aria-label="Delete invoice"
-        className="grid size-9 place-items-center rounded-lg text-[#6b7280] transition hover:bg-[#fdf2f2] hover:text-[#a13d3d] disabled:opacity-40"
+        className="grid size-9 place-items-center rounded-lg text-[var(--dash-subtle)] transition hover:bg-[var(--dash-danger-soft)] hover:text-[var(--dash-danger)] disabled:opacity-40"
       >
         <TrashIcon />
       </button>
+
+      {/* Delete confirmation */}
+      {confirmOpen ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4" onClick={() => setConfirmOpen(false)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Delete invoice"
+            className="w-full max-w-sm rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-6 text-[var(--dash-text)] shadow-[var(--dash-shadow)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="text-lg font-bold">Delete this invoice?</h2>
+            <p className="mt-2 text-sm text-[var(--dash-muted)]">This cannot be undone.</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmOpen(false)}
+                className="rounded-xl border border-[var(--dash-border)] bg-[var(--dash-panel)] px-4 py-2.5 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-hover)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={pending}
+                onClick={handleDelete}
+                className="rounded-xl bg-[var(--dash-danger)] px-4 py-2.5 text-sm font-semibold text-white transition disabled:opacity-50"
+              >
+                {pending ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* Preview modal */}
       {preview ? (
@@ -194,16 +230,16 @@ export function InvoiceRowActions({
             role="dialog"
             aria-modal="true"
             aria-label="Invoice preview"
-            className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-[0_20px_60px_rgba(16,24,40,0.16)]"
+            className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] shadow-[var(--dash-shadow)]"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#f1f2f4] px-5 py-3">
-              <span className="text-sm font-semibold text-[#1a1a2e]">Invoice preview</span>
+            <div className="flex items-center justify-between border-b border-[var(--dash-border-soft)] px-5 py-3">
+              <span className="text-sm font-semibold text-[var(--dash-text)]">Invoice preview</span>
               <button
                 type="button"
                 onClick={() => setPreview(false)}
                 aria-label="Close"
-                className="grid size-8 place-items-center rounded-lg text-[#9aa0a6] transition hover:bg-[#f1f2f4] hover:text-[#1a1a2e]"
+                className="grid size-8 place-items-center rounded-lg text-[var(--dash-muted)] transition hover:bg-[var(--dash-hover)] hover:text-[var(--dash-text)]"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="size-5">
                   <path d="M18 6 6 18M6 6l12 12" />

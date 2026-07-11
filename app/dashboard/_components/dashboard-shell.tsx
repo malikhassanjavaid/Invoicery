@@ -1,5 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+import { BrandLogo } from "@/app/_components/brand-logo";
+import { DashboardThemeToggle } from "./dashboard-theme";
 import { SidebarUser } from "./sidebar-user";
 
 type IconProps = { className?: string };
@@ -68,53 +69,59 @@ export function DashboardShell({
     : sidebarItems.filter((item) => item.label === "Company Profile");
 
   return (
-    <main className="min-h-screen bg-white text-[#1a1a2e]">
+    <main className="min-h-screen bg-[var(--dash-bg)] text-[var(--dash-text)] transition-colors">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="border-b border-[#eef0f2] bg-white px-4 py-6 lg:w-72 lg:border-b-0 lg:border-r">
-          <Link href="/" className="flex items-center gap-2 px-2">
-            <Image src="/logo.png" alt="Invoicery logo" width={28} height={28} className="object-contain" />
-            <span className="text-2xl font-extrabold italic tracking-tight text-[#1a1a2e]">
-              Invoicery
-            </span>
-          </Link>
+        <aside className="flex flex-col border-b border-[var(--dash-border)] bg-[var(--dash-sidebar)] px-4 py-6 transition-colors lg:w-72 lg:border-b-0 lg:border-r">
+          <div>
+            <div className="px-2">
+              <BrandLogo iconSize="sm" />
+            </div>
 
-          <div className="mt-6">
-            <SidebarUser />
+            <div className="mt-6">
+              <SidebarUser />
+            </div>
+
+            <nav className="mt-6 flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
+              {visibleSidebarItems.map((item) => {
+                const Icon = icons[item.label];
+                const isActive = item.label === active;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-medium transition ${
+                      isActive
+                        ? "bg-[var(--dash-panel-soft)] text-[var(--dash-text)]"
+                        : "text-[var(--dash-muted)] hover:bg-[var(--dash-hover)] hover:text-[var(--dash-text)]"
+                    }`}
+                  >
+                    {Icon ? <Icon className="size-5 shrink-0" /> : null}
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
           </div>
 
-          <nav className="mt-6 flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
-            {visibleSidebarItems.map((item) => {
-              const Icon = icons[item.label];
-              const isActive = item.label === active;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`flex items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                    isActive
-                      ? "bg-[#f1f2f4] text-[#1a1a2e]"
-                      : "text-[#9aa0a6] hover:bg-[#f7f7f8] hover:text-[#1a1a2e]"
-                  }`}
-                >
-                  {Icon ? <Icon className="size-5 shrink-0" /> : null}
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+          <div className="mt-6 border-t border-[var(--dash-border)] pt-4 lg:mt-auto">
+            <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-[var(--dash-muted)]">
+              Appearance
+            </p>
+            <DashboardThemeToggle sidebar />
+          </div>
         </aside>
 
-        <section className="flex-1 bg-white">
+        <section className="flex-1 bg-[var(--dash-bg)] transition-colors">
           <div className="px-6 py-7 lg:px-9 lg:py-9">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-sm font-medium text-[#9aa0a6]">{subtitle}</p>
-                <h1 className="mt-1 text-3xl font-bold tracking-tight text-[#1a1a2e]">{title}</h1>
+                <p className="text-sm font-medium text-[var(--dash-muted)]">{subtitle}</p>
+                <h1 className="mt-1 text-3xl font-bold tracking-tight text-[var(--dash-text)]">{title}</h1>
               </div>
-              {actions ? (
-                <div className="flex flex-col gap-3 sm:flex-row">{actions}</div>
-              ) : null}
+              <div className="flex flex-col gap-3 sm:flex-row">
+                {actions}
+              </div>
             </div>
 
             <div className="mt-8">{children}</div>

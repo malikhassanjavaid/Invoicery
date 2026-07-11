@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { DashboardShell } from "../_components/dashboard-shell";
 import { CreateInvoiceButton } from "./_components/invoice-dialog";
@@ -9,6 +10,12 @@ import { formatCents, formatDate } from "@/lib/format";
 import { requireSyncedUser } from "@/lib/auth-sync";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Invoices",
+  description:
+    "Create, preview, share, edit, and track professional invoices from your Invoicery workspace.",
+};
 
 export default async function InvoicesPage() {
   const userId = await requireSyncedUser();
@@ -49,10 +56,10 @@ export default async function InvoicesPage() {
         <CreateInvoiceButton clients={clientOptions} currency={currency} company={companyInfo} />
       }
     >
-      <div className="rounded-2xl border border-[#eef0f2] bg-white">
-        <div className="border-b border-[#f1f2f4] px-6 py-4">
-          <h2 className="text-lg font-semibold text-[#1a1a2e]">All invoices</h2>
-          <p className="mt-1 text-sm text-[#9aa0a6]">
+      <div className="rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)]">
+        <div className="border-b border-[var(--dash-border-soft)] px-6 py-4">
+          <h2 className="text-lg font-semibold text-[var(--dash-text)]">All invoices</h2>
+          <p className="mt-1 text-sm text-[var(--dash-muted)]">
             {invoices.length} {invoices.length === 1 ? "invoice" : "invoices"} stored.
           </p>
         </div>
@@ -60,7 +67,7 @@ export default async function InvoicesPage() {
         {invoices.length ? (
           <div>
             {/* Column header */}
-            <div className="hidden items-center gap-4 border-b border-[#f1f2f4] px-6 py-2.5 text-xs font-medium uppercase tracking-wide text-[#9aa0a6] md:flex">
+            <div className="hidden items-center gap-4 border-b border-[var(--dash-border-soft)] px-6 py-2.5 text-xs font-medium uppercase tracking-wide text-[var(--dash-muted)] md:flex">
               <div className="min-w-0 flex-1">Invoice</div>
               <div className="min-w-0 flex-1">Client</div>
               <div className="w-28 shrink-0 text-right">Amount</div>
@@ -69,7 +76,7 @@ export default async function InvoicesPage() {
               <div className="w-36 shrink-0 text-right">Actions</div>
             </div>
 
-            <div className="divide-y divide-[#f4f5f6]">
+            <div className="divide-y divide-[var(--dash-border-soft)]">
               {invoices.map((invoice) => {
                 const docInvoice = {
                   id: invoice.id,
@@ -101,7 +108,7 @@ export default async function InvoicesPage() {
                 return (
                   <div
                     key={invoice.id}
-                    className="flex items-center gap-4 px-6 py-3 transition hover:bg-[#fafbfc]"
+                    className="flex items-center gap-4 px-6 py-3 transition hover:bg-[var(--dash-hover)]"
                   >
                     {/* Invoice */}
                     <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -116,8 +123,8 @@ export default async function InvoicesPage() {
                         </svg>
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate font-semibold text-[#1a1a2e]">{invoice.invoiceNo}</p>
-                        <p className="truncate text-xs text-[#9aa0a6]">
+                        <p className="truncate font-semibold text-[var(--dash-text)]">{invoice.invoiceNo}</p>
+                        <p className="truncate text-xs text-[var(--dash-muted)]">
                           Issued {formatDate(invoice.issueDate)}
                         </p>
                       </div>
@@ -125,19 +132,19 @@ export default async function InvoicesPage() {
 
                     {/* Client */}
                     <div className="hidden min-w-0 flex-1 md:block">
-                      <p className="truncate text-sm font-medium text-[#1a1a2e]">
+                      <p className="truncate text-sm font-medium text-[var(--dash-text)]">
                         {invoice.client.name}
                       </p>
-                      <p className="truncate text-xs text-[#9aa0a6]">{invoice.client.email}</p>
+                      <p className="truncate text-xs text-[var(--dash-muted)]">{invoice.client.email}</p>
                     </div>
 
                     {/* Amount */}
-                    <div className="w-28 shrink-0 text-right text-sm font-semibold text-[#1a1a2e]">
+                    <div className="w-28 shrink-0 text-right text-sm font-semibold text-[var(--dash-text)]">
                       {formatCents(getInvoiceTotal(invoice), currency)}
                     </div>
 
                     {/* Due date */}
-                    <div className="hidden w-28 shrink-0 text-right text-sm text-[#6b7280] lg:block">
+                    <div className="hidden w-28 shrink-0 text-right text-sm text-[var(--dash-subtle)] lg:block">
                       {formatDate(invoice.dueDate)}
                     </div>
 
@@ -162,10 +169,10 @@ export default async function InvoicesPage() {
             </div>
           </div>
         ) : (
-          <div className="px-6 py-8 text-sm text-[#9aa0a6]">
+          <div className="px-6 py-8 text-sm text-[var(--dash-muted)]">
             <p>No invoices yet. Use the Create invoice button to add your first one.</p>
             {!clients.length ? (
-              <Link href="/dashboard/clients" className="mt-3 inline-flex font-semibold text-[#1a1a2e]">
+              <Link href="/dashboard/clients" className="mt-3 inline-flex font-semibold text-[var(--dash-text)]">
                 Add a client first
               </Link>
             ) : null}
