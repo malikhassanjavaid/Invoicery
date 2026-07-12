@@ -90,3 +90,11 @@ npm run build
 ```
 
 These checks catch TypeScript, ESLint, and Next.js build issues before deployment.
+
+## Deployment Checklist
+
+- Add Clerk environment variables to the hosting provider.
+- Add the Neon database URL to the production environment.
+- Run Prisma migrations before relying on production data.
+- Confirm protected dashboard routes redirect signed-out users.
+- Verify invoice preview links after deployment.
