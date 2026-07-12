@@ -296,28 +296,64 @@ export default async function Home() {
 
       <section id="how-we-do-it" className="bg-white px-6 py-20 sm:px-8">
         <div className="mx-auto max-w-[1120px]">
-          <div className="text-center">
-            <p className="text-sm font-semibold text-[#0457ff]">How We Do It</p>
-            <h2 className="mx-auto mt-3 max-w-2xl text-[clamp(2rem,4vw,3.15rem)] font-semibold leading-[1.08] tracking-[-0.055em] text-[#080d1d]">
-              From setup to sent invoice in minutes.
-            </h2>
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="text-sm font-semibold text-[#0457ff]">How We Do It</p>
+              <h2 className="mt-3 max-w-xl text-[clamp(2rem,4vw,3.15rem)] font-semibold leading-[1.08] tracking-[-0.055em] text-[#080d1d]">
+                From setup to sent invoice in minutes.
+              </h2>
+            </div>
+            <p className="max-w-xl text-[17px] font-medium leading-8 text-[#5f6678] lg:justify-self-end">
+              Each step keeps the next one ready, so your company details, client data,
+              invoice lines, and payment status stay connected.
+            </p>
           </div>
 
-          <div className="mt-12 grid gap-4 md:grid-cols-4">
-            {["Profile", "Client", "Invoice", "Track"].map((item, index) => (
-              <div key={item} className="rounded-[22px] border border-[#e8edf6] bg-white p-6 shadow-[0_16px_45px_rgba(15,23,42,0.04)]">
-                <p className="text-sm font-semibold text-[#0457ff]">0{index + 1}</p>
-                <h3 className="mt-8 text-xl font-semibold tracking-[-0.04em] text-[#080d1d]">{item}</h3>
-                <p className="mt-3 text-sm font-medium leading-6 text-[#5f6678]">
-                  {[
-                    "Enter business details once.",
-                    "Save who you are billing.",
-                    "Add items, due date, and notes.",
-                    "Watch payment status update.",
-                  ][index]}
-                </p>
-              </div>
-            ))}
+          <div className="relative mt-12 rounded-[30px] border border-[#e2eaf6] bg-[#f8fbff] p-4 shadow-[0_24px_70px_rgba(15,76,180,0.07)] sm:p-5">
+            <div className="absolute left-10 right-10 top-[58px] hidden h-px bg-[#d7e3f5] lg:block" />
+            <div className="grid gap-4 lg:grid-cols-4">
+              {[
+                [
+                  "01",
+                  "Profile",
+                  "Save business details, logo, currency, and brand color once.",
+                  "M4 7h16 M4 12h10 M4 17h16",
+                ],
+                [
+                  "02",
+                  "Client",
+                  "Add the billing contact and keep it ready for future invoices.",
+                  "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M22 21v-2a4 4 0 0 0-3-3.87",
+                ],
+                [
+                  "03",
+                  "Invoice",
+                  "Build line items, due dates, notes, tax, and discount in one flow.",
+                  "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z M14 2v6h6 M16 13H8 M16 17H8",
+                ],
+                [
+                  "04",
+                  "Track",
+                  "Update status, preview the invoice, copy links, and follow payment.",
+                  "M3 12h4l3 8 4-16 3 8h4",
+                ],
+              ].map(([step, title, detail, icon]) => (
+                <div key={step} className="relative rounded-[24px] border border-[#e2eaf6] bg-white p-5 shadow-[0_14px_35px_rgba(15,23,42,0.04)]">
+                  <div className="flex items-center justify-between">
+                    <span className="grid size-11 place-items-center rounded-2xl bg-[#0457ff] text-sm font-bold text-white shadow-[0_12px_28px_rgba(4,87,255,0.22)]">
+                      {step}
+                    </span>
+                    <span className="grid size-10 place-items-center rounded-2xl bg-[#f6faff] text-[#0457ff]">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+                        <path d={icon} />
+                      </svg>
+                    </span>
+                  </div>
+                  <h3 className="mt-8 text-xl font-semibold tracking-[-0.04em] text-[#080d1d]">{title}</h3>
+                  <p className="mt-3 text-sm font-medium leading-6 text-[#5f6678]">{detail}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -408,49 +444,56 @@ export default async function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-[#edf1f7] bg-white px-6 py-10 sm:px-8">
+      <footer className="border-t border-[#edf1f7] bg-[#fbfdff] px-6 py-12 sm:px-8">
         <div className="mx-auto max-w-[1120px]">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-sm">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+            <div>
               <BrandLogo iconSize="sm" />
-              <p className="mt-4 text-sm font-medium leading-7 text-[#5f6678]">
-                A clean invoicing workspace for managing company details, clients,
-                and professional invoices in one place.
+              <p className="mt-4 max-w-md text-sm font-medium leading-7 text-[#5f6678]">
+                Invoicery keeps company profiles, clients, invoice creation, and payment
+                tracking together in one focused workspace.
               </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {["Company profiles", "Client records", "Invoice tracking"].map((item) => (
+                  <span key={item} className="rounded-full border border-[#e1eaf6] bg-white px-3 py-1.5 text-xs font-semibold text-[#5f6678]">
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#080d1d]">Product</h3>
-                <div className="mt-4 grid gap-3 text-sm font-semibold text-[#5f6678]">
-                  <a href="#features" className="transition hover:text-[#0457ff]">Features</a>
-                  <a href="#method" className="transition hover:text-[#0457ff]">Method</a>
-                  <a href="#how-we-do-it" className="transition hover:text-[#0457ff]">Workflow</a>
+            <div className="grid gap-8 sm:grid-cols-3">
+              {[
+                ["Product", [["Features", "#features"], ["Workflow", "#how-we-do-it"], ["Case Study", "#case-study"]]],
+                ["Workspace", [["Dashboard", "/dashboard"], ["Clients", "/dashboard/clients"], ["Invoices", "/dashboard/invoices"]]],
+                ["Account", [[isSignedIn ? appLabel : "Sign in", isSignedIn ? appHref : "/sign-in"], ["Get started", appHref]]],
+              ].map(([title, links]) => (
+                <div key={title as string}>
+                  <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#080d1d]">{title as string}</h3>
+                  <div className="mt-4 grid gap-3 text-sm font-semibold text-[#5f6678]">
+                    {(links as string[][]).map(([label, href]) =>
+                      href.startsWith("#") ? (
+                        <a key={`${label}-${href}`} href={href} className="transition hover:text-[#0457ff]">
+                          {label}
+                        </a>
+                      ) : (
+                        <Link key={`${label}-${href}`} href={href} className="transition hover:text-[#0457ff]">
+                          {label}
+                        </Link>
+                      ),
+                    )}
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#080d1d]">Workspace</h3>
-                <div className="mt-4 grid gap-3 text-sm font-semibold text-[#5f6678]">
-                  <Link href="/dashboard" className="transition hover:text-[#0457ff]">Dashboard</Link>
-                  <Link href="/dashboard/clients" className="transition hover:text-[#0457ff]">Clients</Link>
-                  <Link href="/dashboard/invoices" className="transition hover:text-[#0457ff]">Invoices</Link>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-[#080d1d]">Account</h3>
-                <div className="mt-4 grid gap-3 text-sm font-semibold text-[#5f6678]">
-                  {!isSignedIn && <Link href="/sign-in" className="transition hover:text-[#0457ff]">Sign in</Link>}
-                  <Link href={appHref} className="transition hover:text-[#0457ff]">{appLabel}</Link>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          <div className="mt-10 flex flex-col gap-3 border-t border-[#edf1f7] pt-6 text-sm font-medium text-[#8b94a6] sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-10 flex flex-col gap-4 border-t border-[#e7eef8] pt-6 text-sm font-medium text-[#8b94a6] md:flex-row md:items-center md:justify-between">
             <p>(c) 2026 Invoicery. All rights reserved.</p>
-            <p>Professional invoice management for modern teams.</p>
+            <div className="flex flex-wrap gap-5">
+              <span>Secure auth with Clerk</span>
+              <span>Powered by Neon and Prisma</span>
+            </div>
           </div>
         </div>
       </footer>
