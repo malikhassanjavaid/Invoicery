@@ -351,56 +351,57 @@ export default async function Home() {
       </section>
 
       <section className="bg-white px-6 py-20 sm:px-8">
-        <div className="mx-auto grid max-w-[1120px] overflow-hidden rounded-[30px] border border-[#dfe9f8] bg-[#f6faff] shadow-[0_28px_90px_rgba(15,76,180,0.1)] lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="px-6 py-12 sm:px-10 lg:py-16">
-            <p className="text-sm font-semibold text-[#0457ff]">Start billing with confidence</p>
-            <h2 className="mt-4 max-w-2xl text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-0.055em] text-[#080d1d]">
-              Ready to create your first professional invoice?
-            </h2>
-            <p className="mt-5 max-w-xl text-[17px] font-medium leading-8 text-[#4b5263]">
-              Add your company profile, save the client, and create a branded invoice from one connected dashboard.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link
-                href={appHref}
-                className="inline-flex rounded-[12px] bg-[#0457ff] px-7 py-3.5 text-[15px] font-semibold text-white shadow-[0_18px_38px_rgba(4,87,255,0.22)] transition hover:bg-[#0048dc]"
-              >
-                {appLabel}
-              </Link>
-              <span className="rounded-full border border-[#dfe9f8] bg-white px-4 py-2 text-sm font-semibold text-[#4b5263]">
-                No setup clutter
-              </span>
+        <div className="mx-auto max-w-[1120px] overflow-hidden rounded-[28px] bg-[#080d1d] text-white shadow-[0_28px_80px_rgba(8,13,29,0.2)]">
+          <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_420px] lg:items-center lg:p-10">
+            <div>
+              <p className="text-sm font-semibold text-[#78b5ff]">Your billing desk is ready</p>
+              <h2 className="mt-4 max-w-2xl text-[clamp(2rem,4vw,3.15rem)] font-semibold leading-[1.06] tracking-[-0.055em]">
+                Create a client-ready invoice without rebuilding the same details again.
+              </h2>
+              <p className="mt-5 max-w-2xl text-[17px] font-medium leading-8 text-white/68">
+                Save the company profile once, keep client records organized, and move straight into polished invoice creation.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link
+                  href={appHref}
+                  className="inline-flex rounded-[12px] bg-[#0457ff] px-6 py-3.5 text-[15px] font-semibold text-white shadow-[0_18px_38px_rgba(4,87,255,0.22)] transition hover:bg-[#1c68ff]"
+                >
+                  {appLabel}
+                </Link>
+                <a
+                  href="#how-we-do-it"
+                  className="inline-flex rounded-[12px] border border-white/14 px-6 py-3.5 text-[15px] font-semibold text-white/85 transition hover:bg-white/8"
+                >
+                  See workflow
+                </a>
+              </div>
             </div>
-          </div>
 
-          <div className="border-t border-[#dfe9f8] bg-white/70 p-6 sm:p-8 lg:border-l lg:border-t-0">
-            <div className="rounded-[24px] border border-[#e4ecf8] bg-white p-5 shadow-[0_18px_55px_rgba(15,76,180,0.09)]">
-              <div className="flex items-center justify-between">
+            <div className="rounded-[22px] border border-white/10 bg-white/[0.06] p-5">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#9aa3b3]">Invoice preview</p>
-                  <p className="mt-2 text-2xl font-semibold tracking-[-0.045em] text-[#080d1d]">INV-2026-014</p>
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-white/45">Invoice flow</p>
+                  <p className="mt-1 text-lg font-semibold tracking-[-0.035em]">From profile to paid</p>
                 </div>
-                <span className="rounded-full bg-[#e7f5ec] px-3 py-1 text-xs font-bold text-[#1f8a5b]">Paid</span>
+                <span className="rounded-full bg-[#f9d9df] px-3 py-1 text-xs font-bold text-[#080d1d]">3 steps</span>
               </div>
 
-              <div className="mt-6 grid gap-3">
+              <div className="mt-5 grid gap-3">
                 {[
-                  ["Company profile", "Ready"],
-                  ["Client record", "Acme Studio"],
-                  ["Invoice total", "$4,320"],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between rounded-[16px] bg-[#f6faff] px-4 py-3">
-                    <span className="text-sm font-semibold text-[#6b7280]">{label}</span>
-                    <span className="text-sm font-bold text-[#080d1d]">{value}</span>
+                  ["01", "Company profile", "Brand, contact, and currency details"],
+                  ["02", "Client record", "Reusable billing contact"],
+                  ["03", "Invoice", "Items, totals, status, and share link"],
+                ].map(([step, title, detail]) => (
+                  <div key={step} className="grid grid-cols-[42px_1fr] gap-3 rounded-[16px] bg-white/[0.07] p-3">
+                    <span className="grid size-10 place-items-center rounded-full bg-white text-sm font-bold text-[#0457ff]">
+                      {step}
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold">{title}</p>
+                      <p className="mt-1 text-xs font-medium leading-5 text-white/50">{detail}</p>
+                    </div>
                   </div>
                 ))}
-              </div>
-
-              <div className="mt-5 rounded-[18px] bg-[#080d1d] p-4 text-white">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-white/65">Next action</span>
-                  <span className="text-sm font-semibold">Send invoice</span>
-                </div>
               </div>
             </div>
           </div>
