@@ -20,6 +20,10 @@ Invoicery is a modern invoicing SaaS app built with Next.js. It gives users a po
 - Invoice creation, editing, previewing, sharing, and status tracking
 - Light and dark dashboard themes
 
+## Landing Page Structure
+
+The public landing page introduces the product before authentication. It includes a responsive hero, feature overview, invoice preview, workflow steps, case study metrics, conversion call-to-action, and footer navigation.
+
 ## Local Setup
 
 Install dependencies:
