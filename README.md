@@ -65,6 +65,10 @@ npx prisma migrate dev
 
 Clerk handles sign in and sign up. Signed-out visitors can use the landing page and auth pages, while dashboard routes are protected. On first dashboard access, users are guided to complete the company profile before using the rest of the workspace.
 
+## Dashboard Experience
+
+The dashboard uses a shared sidebar shell, theme toggle, onboarding steps, and dark-mode-aware forms. Users can manage profile details, client records, invoice status, invoice previews, and share/download actions from the protected workspace.
+
 ## Main Routes
 
 - `/` - public landing page
