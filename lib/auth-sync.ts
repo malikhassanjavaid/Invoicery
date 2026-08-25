@@ -1,48 +1,10 @@
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { getPrisma, hasDatabaseUrl } from "./prisma";
 
-function decodeBase64Url(value: string) {
-  const padded = value.padEnd(value.length + ((4 - (value.length % 4)) % 4), "=");
-  return Buffer.from(padded.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString(
-    "utf8",
-  );
-}
-
-export async function getClerkSessionClaims() {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore
-    .getAll()
-    .find((cookie) => cookie.name.startsWith("__session"));
-
-  if (!sessionCookie?.value) {
-    return null;
-  }
-
-  const [, payload] = sessionCookie.value.split(".");
-
-  if (!payload) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(decodeBase64Url(payload)) as {
-      sub?: string;
-      email?: string;
-      given_name?: string;
-      family_name?: string;
-      image_url?: string;
-    };
-  } catch {
-    return null;
-  }
-}
-
 export async function getSessionUserId() {
-  const claims = await getClerkSessionClaims();
-
-  return claims?.sub ?? null;
+  const { userId } = await auth();
+  return userId;
 }
 
 type ClerkProfile = {
@@ -52,30 +14,25 @@ type ClerkProfile = {
   imageUrl?: string;
 };
 
-// Read the signed-in user's real profile from Clerk's Backend API. This works
-// with only the secret key (no Clerk middleware required) and, crucially, gives
-// us the real email address — the session cookie does not contain one.
+// Fetch the current Clerk profile so deleted or invalid accounts fail closed
+// instead of being mapped to a fabricated local identity.
 async function getClerkProfile(clerkUserId: string): Promise<ClerkProfile> {
-  const fallback: ClerkProfile = { email: `${clerkUserId}@clerk.local` };
+  const client = await clerkClient();
+  const user = await client.users.getUser(clerkUserId);
+  const primary =
+    user.emailAddresses.find((entry) => entry.id === user.primaryEmailAddressId) ??
+    user.emailAddresses[0];
 
-  try {
-    const client = await clerkClient();
-    const user = await client.users.getUser(clerkUserId);
-    const primary =
-      user.emailAddresses.find((entry) => entry.id === user.primaryEmailAddressId) ??
-      user.emailAddresses[0];
-
-    return {
-      email: primary?.emailAddress?.toLowerCase() ?? fallback.email,
-      firstName: user.firstName ?? undefined,
-      lastName: user.lastName ?? undefined,
-      imageUrl: user.imageUrl ?? undefined,
-    };
-  } catch {
-    // If the Clerk lookup fails, fall back to id-based identity so the app
-    // still works (behaves like before this change).
-    return fallback;
+  if (!primary) {
+    throw new Error("The signed-in Clerk account has no email address.");
   }
+
+  return {
+    email: primary.emailAddress.toLowerCase(),
+    firstName: user.firstName ?? undefined,
+    lastName: user.lastName ?? undefined,
+    imageUrl: user.imageUrl ?? undefined,
+  };
 }
 
 export async function requireSyncedUser() {

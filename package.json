@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
+    "test:auth": "node scripts/auth-session-regression.mjs",
+    "test:clerk-provider": "node scripts/clerk-provider-regression.mjs",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio"
