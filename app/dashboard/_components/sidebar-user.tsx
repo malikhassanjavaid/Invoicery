@@ -67,7 +67,16 @@ export function SidebarUser() {
           </button>
           <button
             type="button"
-            onClick={() => clerk.signOut({ redirectUrl: "/" })}
+            onClick={async () => {
+              setOpen(false);
+              const sessionId = clerk.session?.id;
+
+              try {
+                await clerk.signOut(sessionId ? { sessionId } : undefined);
+              } finally {
+                window.location.assign("/");
+              }
+            }}
             className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-[var(--dash-danger)] hover:bg-[var(--dash-danger-soft)]"
           >
             Sign out
