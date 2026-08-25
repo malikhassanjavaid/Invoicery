@@ -92,8 +92,8 @@ function ClientDialog({
         className="w-full max-w-md rounded-2xl border border-[var(--dash-border)] bg-[var(--dash-panel)] p-6 text-[var(--dash-text)] shadow-[var(--dash-shadow)]"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2 className="text-xl font-bold text-[var(--dash-text)]">{title}</h2>
-        <form action={formAction} className="mt-5 grid gap-4">
+        <h2 className="text-center text-xl font-bold text-[var(--dash-text)]">{title}</h2>
+        <form action={formAction} className="mt-5 grid gap-4 text-left">
           {defaults?.id ? <input type="hidden" name="id" value={defaults.id} /> : null}
           <label className="grid gap-2 text-sm font-semibold text-[var(--dash-text)]">
             Client name
